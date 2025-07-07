@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <title>aaditya rengarajan · cybersecurity & ai</title>
+      <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght:400,700&family=IBM+Plex+Mono:wght:500&display=swap" rel="stylesheet">
+      <link rel="stylesheet" href="styles.css"/>
+   </head>
+   <body class="modern">
+      <!-- mesh for modern -->
+      <svg class="mesh" viewBox="0 0 1584 396" preserveAspectRatio="none">
+         <g>
+            <line x1="400" y1="60" x2="520" y2="150"/>
+            <line x1="520" y1="150" x2="680" y2="80"/>
+            <line x1="400" y1="60" x2="680" y2="80"/>
+            <line x1="680" y1="80" x2="900" y2="40"/>
+            <line x1="520" y1="150" x2="820" y2="230"/>
+            <line x1="820" y1="230" x2="1020" y2="120"/>
+            <line x1="1020" y1="120" x2="1220" y2="200"/>
+            <line x1="900" y1="40" x2="1020" y2="120"/>
+            <circle cx="400" cy="60" r="6" data-repel="true"/>
+            <circle cx="520" cy="150" r="6" data-repel="true"/>
+            <circle cx="680" cy="80" r="6" data-repel="true"/>
+            <circle cx="900" cy="40" r="6" data-repel="true"/>
+            <circle cx="820" cy="230" r="6" data-repel="true"/>
+            <circle cx="1020" cy="120" r="6" data-repel="true"/>
+            <circle cx="1220" cy="200" r="6" data-repel="true"/>
+         </g>
+         <g>
+            <text x="388" y="55">nn</text>
+            <text x="508" y="145">ssl</text>
+            <text x="668" y="75">ids</text>
+            <text x="888" y="35">siem</text>
+            <text x="808" y="225">otp</text>
+            <text x="1008" y="115">xdr</text>
+            <text x="1208" y="195">honeypot</text>
+         </g>
+      </svg>
+      <!-- nav -->
+      <nav>
+         <h3>aaditya rengarajan</h3>
+         <ul>
+            <li><a href="#home">home</a></li>
+            <li><a href="#research">research</a></li>
+            <li><a href="#recommendations">lors</a></li>
+            <li class="dropdown">
+               <a style="cursor: crosshair;">about me</a>
+               <div class="dropdown-content">
+                  <a href="./Aaditya_Resume.pdf" target="_blank">resume</a>
+                  <a href="./Aaditya_Portfolio.pdf" target="_blank">portfolio</a>
+               </div>
+            </li>
+         </ul>
+      </nav>
+      <!-- home -->
+      <section id="home" class="active">
+         <div class="hero">
+            <div class="hero-text">
+               <h1>cybersecurity & ml researcher</h1>
+               <h2>aspiring ph.d. student · cybersec & ai systems</h2>
+               <div class="tags"><span class="tag">cybersecurity</span><span class="tag">neural nets</span><span class="tag">red team</span><span class="tag">llms</span></div>
+               <p class="quoteblock">contact: aaditya.r@ieee.org · aaditya.r@nyu.edu</p>
+               <button id="aboutBtn" style="font-family:'IBM Plex Mono',monospace;font-size:1rem;text-transform:lowercase;cursor:pointer;margin-top:-1rem;border:var(--border);padding:1rem;background:var(--bg);width: 100%;text-align: left;">about me</button>
+               <div id="aboutModal"
+                  style="position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);
+                  display:none;align-items:center;justify-content:center;">
+                  <div style="max-width:600px; padding:2rem; background: linear-gradient(rgba(255,255,255,.8), rgba(255,255,255,.8)), url('https://i.ibb.co/DHf7fNWf/image.png'); background-repeat:no-repeat; background-position:center center; background-size:cover; -webkit-background-size:cover; -moz-background-size:cover; -o-background-size:cover; border-radius:10px; overflow-y:auto; max-height:80vh; ">
+                     <button id="closeModal" style="float:right;font-family:'IBM Plex Mono';border:none;background:none;font-size:1rem;cursor:pointer;">✕</button>
+                     <h3 style="margin-bottom:1rem;">about me</h3>
+                     <p>hi! i'm aaditya rengarajan — cybersecurity/ai researcher & engineer and incoming ms cybersecurity grad at nyu. my work sits at the crossroads of offensive security, agentic ai, and automation-first systems design.</p>
+                     <p>over the past few years, i’ve contributed to a mix of gov-grade threat intelligence platforms, large-scale system automation tools, and privacy-preserving ml pipelines. alongside that, i’ve led cybersecurity education initiatives training over 500+ learners in real-world offensive security and python for cyber ops.</p>
+                     <ul style="margin-top:1rem;font-size:.8rem;list-style:disc;padding-left:1.5rem;">
+                        <li><strong>(6m) intel corporation</strong> – worked on automating operations research tasks within intel foundry using ml and deep rl; also designed an agentic ai framework architecture for internal workflows</li>
+                        <li><strong>(2m) indian space research organization</strong> – modeled a new cyber threat intelligence framework using stix/taxii protocols and visualized ioc-based threats using graph analytics</li>
+                        <li><strong>(3y) tactical cyberange simulations</strong> – developed a modular, extensible framework that aggregates and orchestrates offensive security tools for red-teamers; focused heavily on system design and architecture</li>
+                        <li><strong>(1m+) equate petrochemical company</strong> – built a phishing trace-back tool and org-wide recon dashboard including dns mapping, device exposure tracking, and employee breach visibility</li>
+                        <li><strong>(6m) information sharing and analysis center (isac)</strong> – built dark web monitoring systems and base IT systems</li>
+                     </ul>
+                  </div>
+               </div>
+            </div>
+            <div class="gallery"><img src="me_2.jpg"><img src="me_1.png"><img src="educator_1.jpeg"><img src="educator_2.jpeg"></div>
+         </div>
+      </section>
+      <!-- research -->
+      <section id="research">
+         <h2>selected papers</h2>
+         <div class="paper-list">
+            <div class="paper-item">
+               <div class="paper-meta">
+                  <span class="paper-year">2024</span>
+                  <span class="paper-title">FLARE – Federated Learning & Resilient Encryption</span>
+               </div>
+               <div class="paper-abstract">
+                  a framework for dynamic, privacy-preserving network defense that leverages federated learning and encrypted model updates to adapt to emerging threats in real time.
+               </div>
+               <div class="paper-keywords">
+                  <span class="keyword">federated learning</span>
+                  <span class="keyword">privacy-preservation</span>
+                  <span class="keyword">encrypted model updates</span>
+                  <span class="keyword">adaptive firewalls</span>
+               </div>
+               <div class="paper-links">
+                  <a href="https://doi.org/10.1109/PuneCon63413.2024.10895282" target="_blank">paper</a>
+               </div>
+            </div>
+            <div class="paper-item">
+               <div class="paper-meta">
+                  <span class="paper-year">2024</span>
+                  <span class="paper-title">SHADOW – Systematic Heuristic Analysis & Detection</span>
+               </div>
+               <div class="paper-abstract">
+                  automated deep web crawler identifies data leaks and alerts affected parties to strengthen cybersecurity posture.
+               </div>
+               <div class="paper-keywords">
+                  <span class="keyword">deep web</span>
+                  <span class="keyword">data leak prevention</span>
+                  <span class="keyword">threat intelligence</span>
+                  <span class="keyword">automation</span>
+                  <span class="keyword">smart search techniques</span>
+               </div>
+               <div class="paper-links">
+                  <a href="https://doi.org/10.1109/ICAMAC62387.2024.10828750" target="_blank">paper</a>
+               </div>
+            </div>
+            <div class="paper-item">
+               <div class="paper-meta">
+                  <span class="paper-year">2024</span>
+                  <span class="paper-title">CYBRANA – YARA/YAML-driven AI Firewall</span>
+               </div>
+               <div class="paper-abstract">
+                  ai-powered system analyzes server logs and firewall data to detect, classify, and mitigate cyberattacks using known threat frameworks.
+               </div>
+               <div class="paper-keywords">
+                  <span class="keyword">ai</span>
+                  <span class="keyword">cyber attack detection</span>
+                  <span class="keyword">log analysis</span>
+                  <span class="keyword">network security</span>
+                  <span class="keyword">MITRE</span>
+               </div>
+               <div class="paper-links">
+                  <a href="https://doi.org/10.1109/CVMI61877.2024.10782249" target="_blank">paper</a>
+               </div>
+            </div>
+         </div>
+         <div class="external-links">
+            <h3>view all work</h3>
+            <a href="https://orcid.org/0009-0001-1157-059X" target="_blank">orcid</a>
+            <a href="https://ieeexplore.ieee.org/author/836382877804723" target="_blank">ieee xplore</a>
+            <a href="https://scholar.google.com/citations?user=JtOdgDUAAAAJ&hl=en&oi=ao" target="_blank">google scholar</a>
+            <a href="https://www.webofscience.com/wos/author/record/LZH-9654-2025" target="_blank">web of science</a>
+         </div>
+      </section>
+      <!-- lors -->
+      <section id="recommendations">
+         <h2>letters of recommendation</h2>
+         <div class="lor-list">
+            <div class="lor-item"><img class="logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Indian_Space_Research_Organisation_Logo.svg/1059px-Indian_Space_Research_Organisation_Logo.svg.png">mr. pavan kumar – scientist and head of security, isro <a href="LOR_Pavan_Kumar.pdf" target="_blank">view</a></div>
+            <div class="lor-item"><img class="logo" src="https://i.ibb.co/39prdfQv/image.png">mr. harsh shah – founder, readmenow <a href="LOR_Harsh_Shah.pdf" target="_blank">view</a></div>
+            <div class="lor-item"><img class="logo" src="https://www.psgsonscharities.org/favicon.png">dr. g. r. karpagam – professor, psg tech <a href="LOR_G_R_Karpagam.pdf" target="_blank">view</a></div>
+            <div class="lor-item"><img class="logo" src="https://www.psgsonscharities.org/favicon.png">dr. g. sudha sadasivam – head of department, psg tech <a href="LOR_G_Sudha_Sadasivam.pdf" target="_blank">view</a></div>
+            <div class="lor-item"><img class="logo" src="https://www.psgsonscharities.org/favicon.png">mr. a. c. ramesh – asst. professor, psg tech <a href="LOR_A_C_Ramesh.pdf" target="_blank">view</a></div>
+            <div class="lor-item"><img class="logo" src="https://www.equate.com/wp-content/uploads/2018/07/equate-logo-1.png">mr. ismaiel al tamimi – hr, equate <a href="LOR_Ismaiel_Al_Tamimi.pdf" target="_blank">view</a></div>
+         </div>
+      </section>
+      <footer style="padding: 2rem 1rem; font-family: sans-serif; text-align: center;">
+        <div class="footer-controls" style="margin: auto;display: block;">
+
+          <!-- links row -->
+          <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; align-items: center; font-size: 0.9rem; margin-bottom: 1rem;">
+            <a href="https://www.linkedin.com/in/aadityarengarajan/" target="_blank">linkedin</a>
+            <span>·</span>
+            <a href="mailto:aaditya.r@ieee.org" target="_blank">aaditya.r@ieee.org</a>
+            <span>·</span>
+            <a href="mailto:aaditya.r@nyu.edu" target="_blank">aaditya.r@nyu.edu</a>
+            <span>·</span>
+            <button class="bg-toggle" id="bgToggle" style="font-size: 0.9rem; padding: 0.4rem 0.7rem;">hide bg</button>
+          </div>
+
+          <!-- fidget corner label -->
+          <div style="margin-bottom: 0.5rem; font-size: 0.8rem; text-transform: uppercase; color: gray;">fidget corner:</div>
+
+          <!-- fidget toys -->
+          <div id="fidgetCorner" style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 1rem; margin-bottom: 1rem;transform: scale(0.7);">
+            
+            <!-- switch -->
+            <div class="switch-container" id="switchContainer" style="transform: scale(0.6);">
+              <div class="switch-inner">
+                <div class="switch-dot"></div>
+                <label class="switch-label" id="switchLabel">
+                  <input type="checkbox" class="switch-input" id="switchInput" />
+                  <div class="switch-bg">
+                    <div class="switch-arrow"><div></div></div>
+                    <div class="switch-left"></div>
+                    <div class="switch-right"></div>
+                  </div>
+                </label>
+                <div class="switch-line"></div>
+              </div>
+            </div>
+
+            <!-- spinner -->
+            <svg id="spinner" viewBox="0 0 100 100" style="width: 60px; height: 60px;margin-right: 25px;">
+              <circle cx="50" cy="50" r="10" fill="var(--fg)" />
+              <circle cx="50" cy="12" r="12" fill="none" stroke="var(--fg)" stroke-width="4" />
+              <circle cx="12" cy="74" r="12" fill="none" stroke="var(--fg)" stroke-width="4" />
+              <circle cx="88" cy="74" r="12" fill="none" stroke="var(--fg)" stroke-width="4" />
+              <line x1="50" y1="50" x2="50" y2="12" stroke="var(--fg)" stroke-width="3" />
+              <line x1="50" y1="50" x2="12" y2="74" stroke="var(--fg)" stroke-width="3" />
+              <line x1="50" y1="50" x2="88" y2="74" stroke="var(--fg)" stroke-width="3" />
+            </svg>
+
+            <!-- card -->
+            <div class="cardDoor" id="cardDoor" style="transform: scale(0.75);margin-right: 5px;">
+              <div class="card-back"></div>
+            </div>
+
+            <!-- glyph toy -->
+            <div id="glyph">
+              <div class="screen" id="scr" style="font-size: 2rem;">✊</div>
+            </div>
+
+          </div>
+
+          <!-- footer note -->
+          <div style="font-size: 0.75rem; color: gray; max-width: 90%; margin: auto;transform: scale(0.7);">
+            design inspired by nothing.tech & teenage engineering.<br/>
+            fidget corner contains small objects designed to provide tactile stimulation and serve no utility.<br/>
+            featuring a switch, a fidget spinner, a selectable card, and a glyph toy (rock, paper, scissors) inspired by nothing phone 3.
+          </div>
+
+        </div>
+      </footer>
+
+      <!-- sounds -->
+      <audio id="soundOn" src="https://www.soundjay.com/switch/switch-1.wav"></audio>
+      <audio id="soundOff" src="https://www.soundjay.com/switch/switch-3.wav"></audio>
+      <audio id="soundCardOpen" src="https://www.soundjay.com/mechanical/polaroid-camera-close-01.wav"></audio>
+      <audio id="soundCardClose" src="https://www.soundjay.com/mechanical/polaroid-camera-open-01.wav"></audio>
+      <script src="script.js"></script>
+   </body>
+</html>
