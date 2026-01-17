@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--
+===============================================================================
+Document Title : Clock
+Author         : Aaditya Rengarajan
+Development    : Vibe-coded with assistance from Anthropic's Claude Sonnet 4.5
+Description    : Clocks of the world
+Created On     : 2026-01-16
+Last Modified  : 2026-01-16
+===============================================================================
+-->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>world clock</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #fcfcfa;
+            --fg: #0c0c0c;
+            --accent: #ff5500;
+            --dot: rgba(0, 0, 0, .07);
+            --border: 1px solid var(--fg);
+            font-size: 24px;
+        }
+
+        body.dark {
+            --bg: #0c0c0c;
+            --fg: #fcfcfa;
+            --dot: rgba(255, 255, 255, .1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--fg);
+            font-family: 'Space Grotesk', sans-serif;
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background .3s, color .3s;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background-image: radial-gradient(circle, var(--dot) 1px, transparent 1px);
+            background-size: 24px 24px;
+            animation: grid 45s linear infinite;
+        }
+
+        @keyframes grid {
+            to {
+                background-position: 300px 300px;
+            }
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            border-bottom: var(--border);
+            background: var(--bg);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        nav h1 {
+            font-size: 1rem;
+            font-weight: 700;
+            text-transform: lowercase;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        button {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: .75rem;
+            text-transform: lowercase;
+            padding: .5rem 1rem;
+            border: var(--border);
+            background: var(--bg);
+            color: var(--fg);
+            cursor: pointer;
+            border-radius: 20px;
+            transition: .3s;
+        }
+
+        button:hover {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .clocks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .clock-card {
+            border: var(--border);
+            padding: 1.5rem;
+            border-radius: 8px;
+            background: var(--bg);
+            position: relative;
+        }
+
+        .clock-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .clock-zone {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: .7rem;
+            text-transform: uppercase;
+            background: var(--accent);
+            color: #fff;
+            padding: .2rem .5rem;
+            border-radius: 3px;
+        }
+
+        .clock-name {
+            font-size: .85rem;
+            font-weight: 600;
+            text-transform: lowercase;
+            margin-top: .5rem;
+        }
+
+        .clock-time {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 1rem 0;
+            letter-spacing: -1px;
+        }
+
+        .clock-date {
+            font-size: .75rem;
+            opacity: .6;
+        }
+
+        .remove-btn {
+            padding: .25rem .5rem;
+            font-size: .65rem;
+            border-radius: 12px;
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            z-index: 999;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(6px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            max-width: 500px;
+            width: 90%;
+            padding: 2rem;
+            background: var(--bg);
+            border: var(--border);
+            border-radius: 10px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal h2 {
+            font-size: 1.2rem;
+            text-transform: lowercase;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: .75rem;
+            text-transform: lowercase;
+            margin-bottom: .5rem;
+        }
+
+        input, select {
+            width: 100%;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: .85rem;
+            padding: .75rem;
+            border: var(--border);
+            background: var(--bg);
+            color: var(--fg);
+            border-radius: 4px;
+        }
+
+        .timezone-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: var(--border);
+            border-radius: 4px;
+            margin-top: .5rem;
+        }
+
+        .timezone-item {
+            padding: .75rem;
+            border-bottom: var(--border);
+            cursor: pointer;
+            transition: .2s;
+            font-size: .8rem;
+        }
+
+        .timezone-item:last-child {
+            border-bottom: none;
+        }
+
+        .timezone-item:hover {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .share-section {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(128, 128, 128, 0.1);
+            border-radius: 4px;
+        }
+
+        .share-url {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: .7rem;
+            word-break: break-all;
+            margin-top: .5rem;
+            padding: .75rem;
+            background: var(--bg);
+            border: var(--border);
+            border-radius: 4px;
+        }
+
+        @media (max-width: 640px) {
+            nav {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .clocks-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <h1>world clock</h1>
+        <div class="nav-actions">
+            <button id="addClockBtn">+ add clock</button>
+            <button id="shareBtn">share</button>
+            <button id="darkModeBtn">dark mode</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="clocks-grid" id="clocksGrid"></div>
+    </div>
+
+    <!-- Add Clock Modal -->
+    <div class="modal" id="addModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>add timezone</h2>
+                <button class="close-btn" id="closeAddModal">✕</button>
+            </div>
+            <div class="form-group">
+                <label>search timezone</label>
+                <input type="text" id="timezoneSearch" placeholder="type to filter...">
+            </div>
+            <div class="timezone-list" id="timezoneList"></div>
+        </div>
+    </div>
+
+    <!-- Share Modal -->
+    <div class="modal" id="shareModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>share clocks</h2>
+                <button class="close-btn" id="closeShareModal">✕</button>
+            </div>
+            <div class="share-section">
+                <label>shareable url</label>
+                <div class="share-url" id="shareUrl"></div>
+                <button id="copyUrlBtn" style="margin-top: 1rem; width: 100%;">copy url</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Timezone database with GMT offsets
+        const TIMEZONES = [
+            { name: 'EST', fullName: 'Eastern Standard Time', offset: -5 },
+            { name: 'CST', fullName: 'Central Standard Time', offset: -6 },
+            { name: 'MST', fullName: 'Mountain Standard Time', offset: -7 },
+            { name: 'PST', fullName: 'Pacific Standard Time', offset: -8 },
+            { name: 'GMT', fullName: 'Greenwich Mean Time', offset: 0 },
+            { name: 'BST', fullName: 'British Summer Time', offset: 1 },
+            { name: 'CET', fullName: 'Central European Time', offset: 1 },
+            { name: 'EET', fullName: 'Eastern European Time', offset: 2 },
+            { name: 'MSK', fullName: 'Moscow Time', offset: 3 },
+            { name: 'GST', fullName: 'Gulf Standard Time', offset: 4 },
+            { name: 'IST', fullName: 'India Standard Time', offset: 5.5 },
+            { name: 'CST', fullName: 'China Standard Time', offset: 8 },
+            { name: 'JST', fullName: 'Japan Standard Time', offset: 9 },
+            { name: 'AEST', fullName: 'Australian Eastern Standard Time', offset: 10 },
+            { name: 'NZST', fullName: 'New Zealand Standard Time', offset: 12 },
+            { name: 'HST', fullName: 'Hawaii Standard Time', offset: -10 },
+            { name: 'AKST', fullName: 'Alaska Standard Time', offset: -9 },
+            { name: 'BRT', fullName: 'Brasilia Time', offset: -3 },
+            { name: 'ART', fullName: 'Argentina Time', offset: -3 },
+            { name: 'PKT', fullName: 'Pakistan Standard Time', offset: 5 },
+            { name: 'WIB', fullName: 'Western Indonesia Time', offset: 7 },
+            { name: 'KST', fullName: 'Korea Standard Time', offset: 9 },
+        ];
+
+        let clocks = [];
+
+        // Parse URL parameters on load
+        function parseURL() {
+            const params = new URLSearchParams(window.location.search);
+            const zones = params.get('zones');
+            
+            if (zones) {
+                const offsetsArray = zones.split(',').map(z => parseFloat(z.trim()));
+                offsetsArray.forEach(offset => {
+                    const tz = findTimezoneByOffset(offset) || { 
+                        name: `GMT${offset >= 0 ? '+' : ''}${offset}`, 
+                        fullName: `GMT${offset >= 0 ? '+' : ''}${offset}`, 
+                        offset 
+                    };
+                    addClock(tz);
+                });
+            } else {
+                // Add local timezone by default
+                const localOffset = -new Date().getTimezoneOffset() / 60;
+                const localTz = findTimezoneByOffset(localOffset) || { 
+                    name: 'Local', 
+                    fullName: 'Local Time', 
+                    offset: localOffset 
+                };
+                addClock(localTz);
+            }
+        }
+
+        function findTimezoneByOffset(offset) {
+            return TIMEZONES.find(tz => tz.offset === offset);
+        }
+
+        function addClock(timezone) {
+            if (!clocks.some(c => c.offset === timezone.offset)) {
+                clocks.push(timezone);
+                renderClocks();
+            }
+        }
+
+        function removeClock(offset) {
+            clocks = clocks.filter(c => c.offset !== offset);
+            renderClocks();
+        }
+
+        function renderClocks() {
+            const grid = document.getElementById('clocksGrid');
+            grid.innerHTML = '';
+
+            clocks.forEach(tz => {
+                const card = document.createElement('div');
+                card.className = 'clock-card';
+                
+                const time = getTimeForOffset(tz.offset);
+                
+                card.innerHTML = `
+                    <div class="clock-header">
+                        <div>
+                            <div class="clock-zone">${tz.name}</div>
+                            <div class="clock-name">${tz.fullName}</div>
+                        </div>
+                        <button class="remove-btn" onclick="removeClock(${tz.offset})">remove</button>
+                    </div>
+                    <div class="clock-time" data-offset="${tz.offset}"></div>
+                    <div class="clock-date" data-offset="${tz.offset}-date"></div>
+                `;
+                
+                grid.appendChild(card);
+            });
+
+            updateAllClocks();
+        }
+
+        function getTimeForOffset(offset) {
+            const now = new Date();
+            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+            const targetTime = new Date(utc + (3600000 * offset));
+            return targetTime;
+        }
+
+        function formatTime(date) {
+            return date.toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit',
+                hour12: false 
+            });
+        }
+
+        function formatDate(date) {
+            return date.toLocaleDateString('en-US', { 
+                weekday: 'short', 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+            });
+        }
+
+        function updateAllClocks() {
+            clocks.forEach(tz => {
+                const time = getTimeForOffset(tz.offset);
+                const timeEl = document.querySelector(`[data-offset="${tz.offset}"]`);
+                const dateEl = document.querySelector(`[data-offset="${tz.offset}-date"]`);
+                
+                if (timeEl) timeEl.textContent = formatTime(time);
+                if (dateEl) dateEl.textContent = formatDate(time);
+            });
+        }
+
+        // Update clocks every second
+        setInterval(updateAllClocks, 1000);
+
+        // Modal handling
+        const addModal = document.getElementById('addModal');
+        const shareModal = document.getElementById('shareModal');
+
+        document.getElementById('addClockBtn').addEventListener('click', () => {
+            addModal.classList.add('active');
+            renderTimezoneList();
+        });
+
+        document.getElementById('shareBtn').addEventListener('click', () => {
+            shareModal.classList.add('active');
+            generateShareURL();
+        });
+
+        document.getElementById('closeAddModal').addEventListener('click', () => {
+            addModal.classList.remove('active');
+        });
+
+        document.getElementById('closeShareModal').addEventListener('click', () => {
+            shareModal.classList.remove('active');
+        });
+
+        // Close modals on outside click
+        [addModal, shareModal].forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+        });
+
+        // Render timezone list
+        function renderTimezoneList(filter = '') {
+            const list = document.getElementById('timezoneList');
+            const filtered = TIMEZONES.filter(tz => 
+                tz.name.toLowerCase().includes(filter.toLowerCase()) ||
+                tz.fullName.toLowerCase().includes(filter.toLowerCase()) ||
+                tz.offset.toString().includes(filter)
+            );
+
+            list.innerHTML = filtered.map(tz => `
+                <div class="timezone-item" onclick="selectTimezone(${tz.offset})">
+                    <strong>${tz.name}</strong> (GMT${tz.offset >= 0 ? '+' : ''}${tz.offset})
+                    <br><span style="font-size: .7rem; opacity: .7;">${tz.fullName}</span>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('timezoneSearch').addEventListener('input', (e) => {
+            renderTimezoneList(e.target.value);
+        });
+
+        function selectTimezone(offset) {
+            const tz = findTimezoneByOffset(offset);
+            if (tz) {
+                addClock(tz);
+                addModal.classList.remove('active');
+                document.getElementById('timezoneSearch').value = '';
+            }
+        }
+
+        // Generate share URL
+        function generateShareURL() {
+            const baseURL = window.location.origin + window.location.pathname;
+            const zones = clocks.map(c => c.offset >= 0 ? `+${c.offset}` : c.offset).join(',');
+            const shareURL = `${baseURL}?zones=${zones}`;
+            
+            document.getElementById('shareUrl').textContent = shareURL;
+        }
+
+        document.getElementById('copyUrlBtn').addEventListener('click', () => {
+            const url = document.getElementById('shareUrl').textContent;
+            navigator.clipboard.writeText(url).then(() => {
+                const btn = document.getElementById('copyUrlBtn');
+                const originalText = btn.textContent;
+                btn.textContent = 'copied!';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                }, 2000);
+            });
+        });
+
+        // Initialize
+        parseURL();
+
+        // Dark mode toggle
+        const darkModeBtn = document.getElementById('darkModeBtn');
+        const savedTheme = localStorage.getItem('theme');
+        
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark');
+            darkModeBtn.textContent = 'light mode';
+        }
+
+        darkModeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('dark');
+            const isDark = document.body.classList.contains('dark');
+            darkModeBtn.textContent = isDark ? 'light mode' : 'dark mode';
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        });
+    </script>
+</body>
+</html>
