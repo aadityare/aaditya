@@ -787,6 +787,10 @@ Last Modified  : 2026-01-27
                             <input type="text" value="${item.icon}" onchange="updateItem(${index}, 'icon', this.value)">
                         </div>
                         <div>
+                            <label>probability</label>
+                            <input type="text" value="${item.probability}" onchange="updateItem(${index}, 'probability', this.value)">
+                        </div>
+                        <div>
                             <label>background color</label>
                             <input type="color" value="${item.color || '#ff5500'}" onchange="updateItem(${index}, 'color', this.value)" style="height: 40px; padding: 2px;">
                         </div>
