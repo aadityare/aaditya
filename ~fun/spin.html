@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--
+===============================================================================
+Document Title : Spin Wheel
+Author         : Aaditya Rengarajan
+Development    : Vibe-coded with assistance from Anthropic's Claude Sonnet 4.5
+Description    : Spin a wheel!
+Created On     : 2026-01-27
+Last Modified  : 2026-01-27
+===============================================================================
+-->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>spin wheel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #fcfcfa;
+            --fg: #0c0c0c;
+            --accent: #ff5500;
+            --dot: rgba(0, 0, 0, .07);
+            --border: 1px solid var(--fg);
+            font-size: 24px;
+        }
+
+        body.dark {
+            --bg: #0c0c0c;
+            --fg: #fcfcfa;
+            --dot: rgba(255, 255, 255, .1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--fg);
+            font-family: 'Space Grotesk', sans-serif;
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background .3s, color .3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background-image: radial-gradient(circle, var(--dot) 1px, transparent 1px);
+            background-size: 24px 24px;
+            animation: grid 45s linear infinite;
+        }
+
+        @keyframes grid {
+            to {
+                background-position: 300px 300px;
+            }
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            border-bottom: var(--border);
+            background: var(--bg);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        nav h1 {
+            font-size: 1rem;
+            font-weight: 700;
+            text-transform: lowercase;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: .75rem;
+            text-transform: lowercase;
+            padding: .5rem 1rem;
+            border: var(--border);
+            background: var(--bg);
+            color: var(--fg);
+            cursor: pointer;
+            border-radius: 20px;
+            transition: .3s;
+        }
+
+        button:hover {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        button:disabled:hover {
+            background: var(--bg);
+            color: var(--fg);
+            border-color: var(--fg);
+        }
+
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .mode-toggle {
+            display: flex;
+            gap: 0;
+            border: var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .mode-toggle button {
+            border: none;
+            border-radius: 0;
+            padding: .5rem 1.5rem;
+        }
+
+        .mode-toggle button.active {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .wheel-container {
+            position: relative;
+            width: min(90vw, 500px);
+            height: min(90vw, 500px);
+            margin: 2rem 0;
+        }
+
+        .wheel-wrapper {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            transition: filter 0.3s;
+        }
+
+        canvas.spinning {
+            cursor: not-allowed;
+        }
+
+        .pointer {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 40px solid var(--accent);
+            z-index: 5;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        .center-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--bg);
+            border: 4px solid var(--fg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: lowercase;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .center-button:hover {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+            transform: translate(-50%, -50%) scale(1.05);
+        }
+
+        .center-button.spinning {
+            cursor: not-allowed;
+            background: var(--bg);
+            color: var(--fg);
+            border-color: var(--fg);
+        }
+
+        .result-display {
+            text-align: center;
+            margin-top: 2rem;
+            min-height: 100px;
+        }
+
+        .result-display h2 {
+            font-size: 1.5rem;
+            text-transform: lowercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-display .winner {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 2rem;
+            color: var(--accent);
+            margin: 1rem 0;
+        }
+
+        .result-display .winner-icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            inset: 0;
+            z-index: 999;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(6px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            padding: 2rem;
+            background: var(--bg);
+            border: var(--border);
+            border-radius: 10px;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal h2 {
+            font-size: 1.2rem;
+            text-transform: lowercase;
+            font-weight: 700;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+        }
+
+        .item-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .item-card {
+            border: var(--border);
+            padding: 1rem;
+            border-radius: 8px;
+            background: var(--bg);
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-header h3 {
+            font-size: 0.9rem;
+            text-transform: lowercase;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 100px;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        label {
+            display: block;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: .65rem;
+            text-transform: lowercase;
+            margin-bottom: .3rem;
+            opacity: 0.7;
+        }
+
+        input {
+            width: 100%;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: .75rem;
+            padding: .5rem;
+            border: var(--border);
+            background: var(--bg);
+            color: var(--fg);
+            border-radius: 4px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .delete-btn {
+            padding: .3rem .7rem;
+            font-size: .65rem;
+            background: transparent;
+            color: #d44;
+            border-color: #d44;
+        }
+
+        .delete-btn:hover {
+            background: #d44;
+            color: #fff;
+        }
+
+        .add-item-btn {
+            width: 100%;
+            padding: .7rem;
+        }
+
+        .validation-msg {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: .7rem;
+            padding: 0.7rem;
+            border-radius: 4px;
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .validation-msg.error {
+            background: rgba(221, 68, 68, 0.1);
+            color: #d44;
+            border: 1px solid #d44;
+        }
+
+        .validation-msg.success {
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+            border: 1px solid #22c55e;
+        }
+
+        .drag-hint {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: .7rem;
+            text-align: center;
+            margin-top: 1rem;
+            opacity: 0.6;
+        }
+
+        @media (max-width: 768px) {
+            .nav-actions {
+                justify-content: center;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <h1>spin wheel</h1>
+        <div class="nav-actions">
+            <button id="adminBtn">admin panel</button>
+            <button id="darkModeBtn">dark mode</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="mode-toggle">
+            <button id="clickMode" class="active">click to spin</button>
+            <button id="dragMode">drag to spin</button>
+        </div>
+
+        <div class="wheel-container">
+            <div class="pointer"></div>
+            <div class="wheel-wrapper">
+                <canvas id="wheelCanvas"></canvas>
+            </div>
+            <div class="center-button" id="centerBtn">spin</div>
+        </div>
+
+        <div id="dragHint" class="drag-hint" style="display: none;">
+            click and drag the wheel to spin
+        </div>
+
+        <div class="result-display" id="resultDisplay">
+            <h2>spin the wheel!</h2>
+        </div>
+    </div>
+
+    <!-- Admin Modal -->
+    <div class="modal" id="adminModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>admin panel</h2>
+                <button class="close-btn" id="closeModal">✕</button>
+            </div>
+
+            <div class="item-list" id="itemList"></div>
+
+            <button class="add-item-btn" id="addItemBtn">+ add item</button>
+
+            <div class="validation-msg" id="validationMsg" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Default wheel items
+        let items = [
+            { name: 'pizza', probability: 20, icon: '🍕', color: '#ff6b6b' },
+            { name: 'sushi', probability: 20, icon: '🍣', color: '#4ecdc4' },
+            { name: 'burger', probability: 15, icon: '🍔', color: '#ffe66d' },
+            { name: 'tacos', probability: 15, icon: '🌮', color: '#a8e6cf' },
+            { name: 'ramen', probability: 15, icon: '🍜', color: '#ff8b94' },
+            { name: 'salad', probability: 15, icon: '🥗', color: '#95e1d3' }
+        ];
+
+        // Wheel state
+        let currentRotation = 0;
+        let isSpinning = false;
+        let isDragging = false;
+        let lastAngle = 0;
+        let velocity = 0;
+        let mode = 'click'; // 'click' or 'drag'
+
+        // Canvas setup
+        const canvas = document.getElementById('wheelCanvas');
+        const ctx = canvas.getContext('2d');
+        const centerBtn = document.getElementById('centerBtn');
+        const resultDisplay = document.getElementById('resultDisplay');
+        const adminModal = document.getElementById('adminModal');
+        const dragHint = document.getElementById('dragHint');
+
+        // Set canvas size
+        function resizeCanvas() {
+            const size = Math.min(window.innerWidth * 0.9, 500);
+            canvas.width = size * 2; // Higher resolution
+            canvas.height = size * 2;
+            canvas.style.width = size + 'px';
+            canvas.style.height = size + 'px';
+            ctx.scale(2, 2);
+            drawWheel();
+        }
+
+        // Draw the wheel
+        function drawWheel() {
+            const centerX = canvas.width / 4;
+            const centerY = canvas.height / 4;
+            const radius = Math.min(centerX, centerY) - 10;
+
+            ctx.clearRect(0, 0, canvas.width / 2, canvas.height / 2);
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            ctx.rotate((currentRotation * Math.PI) / 180);
+
+            let startAngle = 0;
+
+            items.forEach((item, index) => {
+                const sliceAngle = (item.probability / 100) * 2 * Math.PI;
+                
+                // Draw slice
+                ctx.beginPath();
+                ctx.arc(0, 0, radius, startAngle, startAngle + sliceAngle);
+                ctx.lineTo(0, 0);
+                ctx.fillStyle = item.color || generateColors(items.length)[index];
+                ctx.fill();
+                ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--fg');
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Draw text and icon
+                ctx.save();
+                ctx.rotate(startAngle + sliceAngle / 2);
+                ctx.textAlign = 'center';
+                ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--fg');
+                
+                // Draw icon
+                ctx.font = 'bold 28px Arial';
+                ctx.fillText(item.icon, radius * 0.6, 10);
+                
+                // Draw name
+                ctx.font = 'bold 14px "IBM Plex Mono", monospace';
+                ctx.fillText(item.name, radius * 0.6, 30);
+                
+                // Draw probability
+                ctx.font = '11px "IBM Plex Mono", monospace';
+                ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--fg');
+                ctx.globalAlpha = 0.7;
+                ctx.fillText(`${item.probability}%`, radius * 0.6, 45);
+                ctx.globalAlpha = 1;
+                
+                ctx.restore();
+
+                startAngle += sliceAngle;
+            });
+
+            ctx.restore();
+        }
+
+        // Generate colors for wheel slices
+        function generateColors(count) {
+            const colors = [];
+            const isDark = document.body.classList.contains('dark');
+            
+            for (let i = 0; i < count; i++) {
+                const hue = (i * 360) / count;
+                const saturation = 70;
+                const lightness = isDark ? 45 : 75;
+                colors.push(`hsl(${hue}, ${saturation}%, ${lightness}%)`);
+            }
+            return colors;
+        }
+
+        // Spin the wheel (click mode)
+        function spinWheel() {
+            if (isSpinning) return;
+            
+            isSpinning = true;
+            centerBtn.classList.add('spinning');
+            centerBtn.textContent = '...';
+            canvas.classList.add('spinning');
+            
+            const spins = 5 + Math.random() * 5; // 5-10 full rotations
+            const extraDegrees = Math.random() * 360;
+            const totalRotation = spins * 360 + extraDegrees;
+            const duration = 3000 + Math.random() * 2000; // 3-5 seconds
+            
+            animateSpin(totalRotation, duration);
+        }
+
+        // Animate spin
+        function animateSpin(totalRotation, duration) {
+            const startTime = Date.now();
+            const startRotation = currentRotation;
+            
+            function animate() {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Easing function (ease-out)
+                const easeOut = 1 - Math.pow(1 - progress, 3);
+                
+                currentRotation = (startRotation + totalRotation * easeOut) % 360;
+                drawWheel();
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    finishSpin();
+                }
+            }
+            
+            animate();
+        }
+
+        // Finish spin and show result
+        function finishSpin() {
+            isSpinning = false;
+            centerBtn.classList.remove('spinning');
+            centerBtn.textContent = 'spin';
+            canvas.classList.remove('spinning');
+            
+        }
+
+        // Click mode
+        centerBtn.addEventListener('click', () => {
+            if (mode === 'click') {
+                spinWheel();
+            }
+        });
+
+        // Drag mode
+        function getAngle(x, y) {
+            const rect = canvas.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            return Math.atan2(y - centerY, x - centerX) * 180 / Math.PI;
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            if (mode === 'drag' && !isSpinning) {
+                isDragging = true;
+                lastAngle = getAngle(e.clientX, e.clientY);
+                velocity = 0;
+            }
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                const currentAngle = getAngle(e.clientX, e.clientY);
+                let delta = currentAngle - lastAngle;
+                
+                // Handle angle wrap-around
+                if (delta > 180) delta -= 360;
+                if (delta < -180) delta += 360;
+                
+                velocity = delta;
+                currentRotation += delta;
+                lastAngle = currentAngle;
+                drawWheel();
+            }
+        });
+
+        function stopDragging() {
+            if (isDragging) {
+                isDragging = false;
+                
+                // Apply momentum
+                if (Math.abs(velocity) > 1) {
+                    applyMomentum();
+                }
+            }
+        }
+
+        canvas.addEventListener('mouseup', stopDragging);
+        canvas.addEventListener('mouseleave', stopDragging);
+
+        // Touch events for mobile
+        canvas.addEventListener('touchstart', (e) => {
+            if (mode === 'drag' && !isSpinning) {
+                isDragging = true;
+                const touch = e.touches[0];
+                lastAngle = getAngle(touch.clientX, touch.clientY);
+                velocity = 0;
+                e.preventDefault();
+            }
+        });
+
+        canvas.addEventListener('touchmove', (e) => {
+            if (isDragging) {
+                const touch = e.touches[0];
+                const currentAngle = getAngle(touch.clientX, touch.clientY);
+                let delta = currentAngle - lastAngle;
+                
+                if (delta > 180) delta -= 360;
+                if (delta < -180) delta += 360;
+                
+                velocity = delta;
+                currentRotation += delta;
+                lastAngle = currentAngle;
+                drawWheel();
+                e.preventDefault();
+            }
+        });
+
+        canvas.addEventListener('touchend', stopDragging);
+
+        // Apply momentum after drag
+        function applyMomentum() {
+            isSpinning = true;
+            canvas.classList.add('spinning');
+            centerBtn.classList.add('spinning');
+            centerBtn.textContent = '...';
+            
+            // Amplify the velocity for dramatic effect (3x multiplier)
+            velocity *= 15;
+            
+            function decelerate() {
+                velocity *= 0.96; // Slightly slower deceleration for longer spin
+                currentRotation += velocity;
+                drawWheel();
+                
+                if (Math.abs(velocity) > 0.1) {
+                    requestAnimationFrame(decelerate);
+                } else {
+                    finishSpin();
+                }
+            }
+            
+            decelerate();
+        }
+
+        // Mode toggle
+        document.getElementById('clickMode').addEventListener('click', () => {
+            mode = 'click';
+            document.getElementById('clickMode').classList.add('active');
+            document.getElementById('dragMode').classList.remove('active');
+            centerBtn.style.display = 'flex';
+            dragHint.style.display = 'none';
+        });
+
+        document.getElementById('dragMode').addEventListener('click', () => {
+            mode = 'drag';
+            document.getElementById('dragMode').classList.add('active');
+            document.getElementById('clickMode').classList.remove('active');
+            centerBtn.style.display = 'none';
+            dragHint.style.display = 'block';
+        });
+
+        // Admin panel
+        document.getElementById('adminBtn').addEventListener('click', () => {
+            adminModal.classList.add('active');
+            renderItemList();
+        });
+
+        document.getElementById('closeModal').addEventListener('click', () => {
+            adminModal.classList.remove('active');
+        });
+
+        adminModal.addEventListener('click', (e) => {
+            if (e.target === adminModal) {
+                adminModal.classList.remove('active');
+            }
+        });
+
+        // Render item list in admin panel
+        function renderItemList() {
+            const itemList = document.getElementById('itemList');
+            itemList.innerHTML = items.map((item, index) => `
+                <div class="item-card">
+                    <div class="item-header">
+                        <h3>item ${index + 1}</h3>
+                        <button class="delete-btn" onclick="deleteItem(${index})">delete</button>
+                    </div>
+                    <div class="form-row">
+                        <div>
+                            <label>name</label>
+                            <input type="text" value="${item.name}" onchange="updateItem(${index}, 'name', this.value)">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div>
+                            <label>icon (emoji or image URL)</label>
+                            <input type="text" value="${item.icon}" onchange="updateItem(${index}, 'icon', this.value)">
+                        </div>
+                        <div>
+                            <label>background color</label>
+                            <input type="color" value="${item.color || '#ff5500'}" onchange="updateItem(${index}, 'color', this.value)" style="height: 40px; padding: 2px;">
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            validateProbabilities();
+        }
+
+        // Update item
+        window.updateItem = function(index, field, value) {
+            if (field === 'probability') {
+                items[index][field] = Math.max(1, Math.min(100, parseInt(value) || 1));
+            } else {
+                items[index][field] = value;
+            }
+            validateProbabilities();
+            drawWheel();
+        };
+
+        // Delete item
+        window.deleteItem = function(index) {
+            if (items.length > 2) {
+                items.splice(index, 1);
+                renderItemList();
+                drawWheel();
+            } else {
+                showValidation('need at least 2 items', 'error');
+            }
+        };
+
+        // Add item
+        document.getElementById('addItemBtn').addEventListener('click', () => {
+            const defaultColors = ['#ff6b6b', '#4ecdc4', '#ffe66d', '#a8e6cf', '#ff8b94', '#95e1d3', '#ffd93d', '#6bcf7f'];
+            items.push({
+                name: `item ${items.length + 1}`,
+                probability: 10,
+                icon: '⭐',
+                color: defaultColors[items.length % defaultColors.length]
+            });
+            renderItemList();
+            drawWheel();
+        });
+
+        // Validate probabilities
+        function validateProbabilities() {
+            const total = items.reduce((sum, item) => sum + item.probability, 0);
+            const validationMsg = document.getElementById('validationMsg');
+            
+            if (total === 100) {
+                showValidation('probabilities valid! sum = 100%', 'success');
+            } else {
+                showValidation(`probabilities must sum to 100% (current: ${total}%)`, 'error');
+            }
+        }
+
+        // Show validation message
+        function showValidation(message, type) {
+            const validationMsg = document.getElementById('validationMsg');
+            validationMsg.textContent = message;
+            validationMsg.className = `validation-msg ${type}`;
+            validationMsg.style.display = 'block';
+        }
+
+        // Dark mode toggle
+        const darkModeBtn = document.getElementById('darkModeBtn');
+        const savedTheme = localStorage.getItem('theme');
+        
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark');
+            darkModeBtn.textContent = 'light mode';
+        }
+
+        darkModeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('dark');
+            const isDark = document.body.classList.contains('dark');
+            darkModeBtn.textContent = isDark ? 'light mode' : 'dark mode';
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            drawWheel(); // Redraw with new colors
+        });
+
+        // Initialize
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Query param initialization for special use cases
+        (function initFromQueryParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            if (urlParams.get('clubfest') === 'y') {
+                items = [
+                    { name: 'Sticker', probability: 35, icon: '🎫', color: '#9fa8da' },
+                    { name: 'Candy', probability: 30, icon: '🍬', color: '#f48fb1' },
+                    { name: 'CSAW PCB Badge', probability: 25, icon: '📟', color: '#a5d6a7' },
+                    { name: 'Try Again', probability: 10, icon: '😔', color: '#e0e0e0' }
+                ];
+                // Set to drag mode
+                mode = 'drag';
+                document.getElementById('dragMode').classList.add('active');
+                document.getElementById('clickMode').classList.remove('active');
+                centerBtn.style.display = 'none';
+                dragHint.style.display = 'block';
+
+                // Enable dark mode
+                document.body.classList.add('dark');
+                darkModeBtn.textContent = 'light mode';
+                localStorage.setItem('theme', 'dark');
+                
+                drawWheel();
+                console.log('🎉 Clubfest mode activated!');
+            }
+        })();
+
+
+    </script>
+</body>
+</html>
