@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+    <body>
+        <textarea placeholder="paste garbage here" id="textInput" rows="20" cols="80" style="width:100%;height:400px;font-family:monospace;padding:10px;box-sizing:border-box;"></textarea>
+        <br>
+        <button id="copyButton" style="padding:10px 20px;margin-top:10px;cursor:pointer;">Copy</button>
+        <script>
+            const textInput = document.getElementById('textInput');
+            const copyButton = document.getElementById('copyButton');
+
+            textInput.oninput = function() {
+                this.value = this.value
+                    .normalize('NFC')
+                    .replace(/[^\p{L}\p{N} \n\r]/gu, '')
+                    .replace(/[ \t]+/g, ' ')
+                    .replace(/\n\s+/g, '\n')
+                    .trim();
+            };
+
+            copyButton.onclick = function() {
+                navigator.clipboard.writeText(textInput.value);
+            };
+        </script>
+    </body>
+</html>
