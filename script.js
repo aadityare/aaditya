@@ -181,3 +181,9 @@ document.addEventListener('DOMContentLoaded', () => {
       sound.play().catch(e => console.log('Card sound failed:', e));
    });
 });
+
+const darkToggle = document.getElementById('darkToggle');
+darkToggle.addEventListener('click', () => {
+  document.body.classList.toggle('dark');
+  darkToggle.textContent = document.body.classList.contains('dark') ? 'light mode' : 'dark mode';
+});
