@@ -747,3 +747,11 @@ body.dark #aboutModal > div {
 body.dark #aboutModal > div * {
   filter: invert(1);
 }
+
+body.dark #aboutModal > div li {
+  filter: invert(0)!important;
+}
+
+body.dark #aboutModal > div strong {
+  filter: invert(0)!important;
+}
