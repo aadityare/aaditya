@@ -204,16 +204,47 @@ Created On     : 2026-01-29
             border: 2px solid var(--strip-border);
             padding: 0;
             display: grid;
-            grid-template-columns: 80px 1fr 90px 100px 70px;
+            grid-template-columns: 28px 80px 1fr 90px 100px 90px;
             min-height: 50px;
             font-family: 'IBM Plex Mono', monospace;
             position: relative;
             transition: transform .2s, box-shadow .2s;
         }
 
-        .task-strip:hover {
+        .task-strip:not(.dragging):hover {
             transform: translateX(4px);
             box-shadow: -4px 4px 0 var(--accent);
+        }
+
+        .task-strip.dragging {
+            opacity: .4;
+            border-style: dashed;
+        }
+
+        .task-strip.drag-over {
+            border-top: 3px solid var(--accent);
+        }
+
+        /* Drag handle */
+        .drag-handle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: grab;
+            color: var(--strip-border);
+            font-size: .85rem;
+            border-right: 1px solid var(--strip-border);
+            user-select: none;
+            transition: color .2s, background .2s;
+        }
+
+        .drag-handle:hover {
+            color: var(--accent);
+            background: rgba(255,85,0,.06);
+        }
+
+        .drag-handle:active {
+            cursor: grabbing;
         }
 
         .strip-section {
@@ -297,6 +328,12 @@ Created On     : 2026-01-29
             background: var(--danger);
             color: #fff;
             border-color: var(--danger);
+        }
+
+        .strip-btn.edit {
+            background: var(--warning);
+            color: #000;
+            border-color: var(--warning);
         }
 
         .strip-btn:hover {
@@ -467,7 +504,7 @@ Created On     : 2026-01-29
             }
 
             .task-strip {
-                grid-template-columns: 1fr;
+                grid-template-columns: 28px 1fr;
                 min-height: auto;
             }
 
@@ -590,6 +627,45 @@ Created On     : 2026-01-29
         </div>
     </div>
 
+    <!-- Edit Task Modal -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>edit task</h2>
+                <button class="close-btn" id="closeEditModal">✕</button>
+            </div>
+            <div class="form-group">
+                <label>task id</label>
+                <input type="text" id="editCallsign">
+            </div>
+            <div class="form-group">
+                <label>type</label>
+                <input type="text" id="editType">
+            </div>
+            <div class="form-group">
+                <label>description</label>
+                <textarea id="editDescription"></textarea>
+            </div>
+            <div class="form-group">
+                <label>notes</label>
+                <input type="text" id="editNotes">
+            </div>
+            <div class="form-group">
+                <label>priority</label>
+                <select id="editPriority">
+                    <option value="low">Low</option>
+                    <option value="med">Medium</option>
+                    <option value="high">High</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>deadline</label>
+                <input type="datetime-local" id="editDeadline">
+            </div>
+            <button id="saveEditBtn" style="width: 100%;">save changes</button>
+        </div>
+    </div>
+
     <script>
         // Data storage
         let tasks = JSON.parse(localStorage.getItem('taskStrips')) || [];
@@ -690,7 +766,13 @@ Created On     : 2026-01-29
                 })}</div>` : '';
                 
                 return `
-                    <div class="task-strip">
+                    <div class="task-strip" draggable="true" data-index="${index}"
+                         ondragstart="onDragStart(event, ${index})"
+                         ondragover="onDragOver(event)"
+                         ondragleave="onDragLeave(event)"
+                         ondrop="onDrop(event, ${index})"
+                         ondragend="onDragEnd(event)">
+                        <div class="drag-handle" title="drag to reorder">⠿</div>
                         <div class="strip-section">
                             <div class="strip-callsign">${task.callsign}</div>
                             <div class="strip-type">${task.type}</div>
@@ -707,6 +789,7 @@ Created On     : 2026-01-29
                             ${deadlineHtml}
                         </div>
                         <div class="strip-actions">
+                            <button class="strip-btn edit" onclick="openEditModal(${index})">✎</button>
                             <button class="strip-btn complete" onclick="completeTask(${index})">✓</button>
                             <button class="strip-btn delete" onclick="deleteTask(${index})">✕</button>
                         </div>
@@ -740,6 +823,57 @@ Created On     : 2026-01-29
                 localStorage.setItem('taskStrips', JSON.stringify(tasks));
                 renderTasks();
             }
+        }
+
+        // ── Drag & Drop ──────────────────────────────────────────────────────
+        let dragSrcIndex = null;
+
+        function onDragStart(e, index) {
+            dragSrcIndex = index;
+            e.currentTarget.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function onDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            e.currentTarget.classList.add('drag-over');
+        }
+
+        function onDragLeave(e) {
+            e.currentTarget.classList.remove('drag-over');
+        }
+
+        function onDrop(e, dropIndex) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('drag-over');
+            if (dragSrcIndex === null || dragSrcIndex === dropIndex) return;
+            const moved = tasks.splice(dragSrcIndex, 1)[0];
+            tasks.splice(dropIndex, 0, moved);
+            localStorage.setItem('taskStrips', JSON.stringify(tasks));
+            renderTasks();
+        }
+
+        function onDragEnd(e) {
+            document.querySelectorAll('.task-strip').forEach(el => {
+                el.classList.remove('dragging', 'drag-over');
+            });
+            dragSrcIndex = null;
+        }
+
+        // ── Edit Task ─────────────────────────────────────────────────────────
+        let editingIndex = null;
+
+        function openEditModal(index) {
+            editingIndex = index;
+            const task = tasks[index];
+            document.getElementById('editCallsign').value = task.callsign;
+            document.getElementById('editType').value = task.type;
+            document.getElementById('editDescription').value = task.description;
+            document.getElementById('editNotes').value = task.notes || '';
+            document.getElementById('editPriority').value = task.priority;
+            document.getElementById('editDeadline').value = task.deadline || '';
+            document.getElementById('editModal').classList.add('active');
         }
 
         // Sticky note functions
@@ -809,6 +943,33 @@ Created On     : 2026-01-29
                     modal.classList.remove('active');
                 }
             });
+        });
+
+        const editModal = document.getElementById('editModal');
+        document.getElementById('closeEditModal').addEventListener('click', () => {
+            editModal.classList.remove('active');
+        });
+        editModal.addEventListener('click', (e) => {
+            if (e.target === editModal) editModal.classList.remove('active');
+        });
+
+        document.getElementById('saveEditBtn').addEventListener('click', () => {
+            if (editingIndex === null) return;
+            const description = document.getElementById('editDescription').value.trim();
+            if (!description) { alert('Please enter a description!'); return; }
+            tasks[editingIndex] = {
+                ...tasks[editingIndex],
+                callsign: document.getElementById('editCallsign').value.trim() || tasks[editingIndex].callsign,
+                type: document.getElementById('editType').value.trim() || 'general',
+                description,
+                notes: document.getElementById('editNotes').value.trim(),
+                priority: document.getElementById('editPriority').value,
+                deadline: document.getElementById('editDeadline').value,
+            };
+            localStorage.setItem('taskStrips', JSON.stringify(tasks));
+            renderTasks();
+            editModal.classList.remove('active');
+            editingIndex = null;
         });
 
         // Save task
