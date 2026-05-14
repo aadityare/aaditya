@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>solitude os</title>
+<style>
+@font-face {
+  font-family: 'Iosevka Aile';
+  font-style: normal; font-display: swap; font-weight: 400;
+  src: url(https://cdn.jsdelivr.net/fontsource/fonts/iosevka-aile@latest/latin-400-normal.woff2) format('woff2'),
+       url(https://cdn.jsdelivr.net/fontsource/fonts/iosevka-aile@latest/latin-400-normal.woff) format('woff');
+}
+@font-face {
+  font-family: 'Iosevka Aile';
+  font-style: normal; font-display: swap; font-weight: 700;
+  src: url(https://cdn.jsdelivr.net/fontsource/fonts/iosevka-aile@latest/latin-700-normal.woff2) format('woff2'),
+       url(https://cdn.jsdelivr.net/fontsource/fonts/iosevka-aile@latest/latin-700-normal.woff) format('woff');
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #ffffff;
+  --fg:        #000000;
+  --bg2:       #eeeeee;
+  --border:    #000000;
+  --muted:     #888888;
+  --win-bg:    #ffffff;
+  --input-bg:  #ffffff;
+  --win-hdr:   repeating-linear-gradient(to bottom,#000 0px,#000 1px,#fff 1px,#fff 3px);
+  --win-inner: #ffffff;
+  --icon-filter: invert(1);
+}
+html.dark {
+  --bg:        #111111;
+  --fg:        #f0f0f0;
+  --bg2:       #222222;
+  --border:    #888888;
+  --muted:     #555555;
+  --win-bg:    #1a1a1a;
+  --input-bg:  #2a2a2a;
+  --win-hdr:   repeating-linear-gradient(to bottom,#777 0px,#777 1px,#1a1a1a 1px,#1a1a1a 3px);
+  --win-inner: #2a2a2a;
+  --icon-filter: invert(0);
+}
+
+body, html {
+  width:100%; height:100%;
+  font-family:'Iosevka Aile';
+  font-weight:400;
+  text-transform:lowercase;
+  overflow:hidden;
+  background:transparent;
+  color:var(--fg);
+}
+
+.menu-bar {
+  display:flex; align-items:center;
+  background:var(--bg); color:var(--fg);
+  height:22px; padding:0 8px;
+  border-bottom:1px solid var(--border);
+  position:relative; z-index:9999; gap:2px;
+  background:rgba(255,255,255,0.88);
+}
+html.dark .menu-bar {
+  background:rgba(0,0,0,0.82);
+}
+.menu-apple { font-size:15px; margin-right:10px; cursor:default; user-select:none; }
+
+.menu-item { position:relative; cursor:pointer; font-size:12px; font-weight:700; user-select:none; }
+.menu-item.disabled { color:var(--muted); pointer-events:none; }
+.menu-label { display:inline-block; padding:1px 6px; line-height:20px; }
+.menu-item:hover > .menu-label { background:var(--fg); color:var(--bg); }
+
+.dropdown-content {
+  display:none; position:absolute; top:100%; left:0;
+  background:var(--win-bg); border:1px solid var(--border);
+  box-shadow:2px 2px 0 var(--border); z-index:10000; min-width:190px;
+}
+.menu-item:hover > .dropdown-content { display:block; }
+
+.dropdown-item {
+  padding:4px 16px 4px 12px; cursor:pointer;
+  font-size:11px; position:relative; white-space:nowrap; color:var(--fg);
+}
+.dropdown-item:hover { background:var(--fg); color:var(--bg); }
+.dropdown-item.has-sub::after {
+  content:'▶'; position:absolute; right:6px; top:50%;
+  transform:translateY(-50%); font-size:7px;
+}
+
+.side-dropdown-content {
+  display:none; position:absolute; left:100%; top:0;
+  background:var(--win-bg); border:1px solid var(--border);
+  box-shadow:2px 2px 0 var(--border); z-index:10001; min-width:150px;
+}
+.dropdown-item:hover > .side-dropdown-content { display:block; }
+.side-dropdown-item {
+  padding:4px 16px 4px 12px; cursor:pointer;
+  font-size:11px; white-space:nowrap; color:var(--fg);
+}
+.side-dropdown-item:hover { background:var(--fg); color:var(--bg); }
+.menu-div { border:none; border-top:1px solid var(--muted); margin:2px 0; }
+
+.desktop {
+  position:absolute; top:22px; left:0; right:0; bottom:0; overflow:hidden;
+  background:transparent;
+}
+
+.window {
+  position:absolute; background:var(--win-bg); color:var(--fg);
+  border:2px solid var(--border); box-shadow:3px 3px 0 var(--border);
+  width:300px; z-index:200; display:none;
+}
+.window.visible { display:block; }
+
+.window-header {
+  background:var(--win-hdr); height:20px; cursor:move;
+  display:flex; align-items:center; padding:0 3px; user-select:none;
+}
+.window-titlebar {
+  background:var(--win-inner); border:1px solid var(--border);
+  display:flex; align-items:center; flex:1; height:14px; padding:0 4px; gap:4px;
+}
+.window-close {
+  width:10px; height:10px; border:1px solid var(--border); background:var(--bg);
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  font-size:8px; flex-shrink:0; color:var(--fg); line-height:1;
+}
+.window-close:hover { background:var(--fg); color:var(--bg); }
+.window-title { flex:1; text-align:center; font-size:11px; font-weight:700; color:var(--fg); }
+.window-body { padding:8px; overflow-y:auto; font-size:11px; }
+
+/* default positions */
+#todo-list-window  { top:10px; left:10px; width:300px; }
+#todo-list-window .window-body { max-height:340px; }
+#notes-window      { bottom:10px; left:10px; top:auto; width:260px; }
+#notes-window .window-body { max-height:220px; }
+#info-window       { top:40px; left:calc(50% - 160px); width:320px; z-index:9998; }
+#info-window .window-body { max-height:420px; }
+#sync-window       { top:10px; left:320px; width:300px; z-index:500; }
+#sync-window .window-body { max-height:300px; }
+#welcome-modal     { top:60px; left:calc(50% - 200px); width:400px; z-index:9999; }
+#welcome-modal .window-body { max-height:480px; }
+
+.toggleTable-parent { display:flex; align-items:stretch; }
+#todoTable { width:100%; border-collapse:collapse; font-size:11px; font-family:'Iosevka Aile',monospace; }
+#todoTable thead { display:none; }
+#todoTable.full thead { display:table-header-group; }
+#todoTable th {
+  border:1px solid var(--border); padding:3px 6px;
+  background:var(--bg2); cursor:pointer; font-size:10px; color:var(--fg);
+}
+#todoTable td { border:1px solid var(--muted); padding:3px 6px; color:var(--fg); }
+#todoTable td.task { border-left:4px solid transparent; padding-left:6px; }
+#todoTable tr[data-priority="high"] td.task { border-left-color:#cc2200; }
+#todoTable tr[data-priority="med"]  td.task { border-left-color:#cc8800; }
+#todoTable tr[data-priority="low"]  td.task { border-left-color:#228833; }
+#todoTable tr[data-priority="none"] td.task { border-left-color:#888888; }
+#todoTable.minimal td:nth-child(2),
+#todoTable.minimal td:nth-child(4) { display:none; }
+
+#toggleBar {
+  width:8px; min-height:40px; flex-shrink:0; cursor:pointer;
+  border:1px solid var(--muted); margin-left:2px;
+  background:repeating-linear-gradient(to bottom,var(--muted) 0px,var(--muted) 1px,transparent 1px,transparent 3px);
+}
+#toggleBar:hover { opacity:.6; }
+
+#notes-items { list-style:none; padding:0; margin:0 0 6px; }
+#notes-items li {
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:11px; border-bottom:1px dotted var(--muted); padding:2px 0; gap:4px;
+}
+#notes-items li span { flex:1; word-break:break-word; }
+
+.win-input {
+  font-family:'Iosevka Aile',monospace; font-size:11px;
+  border:1px solid var(--border); padding:2px 4px;
+  background:var(--input-bg); color:var(--fg); flex:1; min-width:0;
+}
+.win-btn {
+  font-family:'Iosevka Aile',monospace; font-size:11px;
+  border:1px solid var(--border); background:var(--bg); color:var(--fg);
+  padding:2px 7px; cursor:pointer; white-space:nowrap; flex-shrink:0;
+}
+.win-btn:hover { background:var(--fg); color:var(--bg); }
+.row-flex { display:flex; gap:4px; align-items:center; margin-top:6px; }
+input[type="checkbox"] { cursor:pointer; accent-color:var(--fg); }
+
+#sync-status { font-size:11px; margin-bottom:6px; color:var(--fg); }
+#sync-results { list-style:none; padding:0; margin:0; max-height:180px; overflow-y:auto; }
+#sync-results li {
+  font-size:11px; border-bottom:1px dotted var(--muted);
+  padding:3px 0; display:flex; justify-content:space-between; align-items:center; gap:4px;
+}
+.sync-tag {
+  font-size:9px; border:1px solid var(--border);
+  padding:0 3px; background:var(--bg2); color:var(--fg); flex-shrink:0;
+}
+.sync-tag.new { background:var(--fg); color:var(--bg); }
+
+.wildcard-table { width:100%; border-collapse:collapse; font-size:10px; margin-top:8px; }
+.wildcard-table th {
+  border:1px solid var(--border); padding:3px 6px; background:var(--bg2);
+  font-size:10px; text-align:left; color:var(--fg);
+}
+.wildcard-table td { border:1px solid var(--muted); padding:3px 6px; color:var(--fg); vertical-align:top; }
+.wildcard-table textarea.fn-editor {
+  width:100%; font-family:'Iosevka Aile',monospace; font-size:10px;
+  background:var(--input-bg); color:var(--fg); border:none; resize:vertical;
+  min-height:40px; outline:none;
+}
+.wildcard-table tr.new-row td { padding:2px; }
+
+#shortcuts {
+  position:absolute; top:10px; right:10px; width:90px; bottom:10px;
+  display:flex; flex-direction:column; align-items:center; gap:8px; pointer-events:none;
+}
+.shortcut {
+  display:flex; flex-direction:column; align-items:center; cursor:pointer;
+  pointer-events:all; width:80px; text-align:center;
+}
+.shortcut-text {
+  font-size:10px; background:var(--bg); color:var(--fg);
+  border:1px solid var(--border); padding:1px 4px;
+  max-width:80px; word-break:break-all;
+}
+.shortcut:hover .shortcut-text { background:var(--fg); color:var(--bg); }
+
+#welcome-text {
+  position:absolute; top:75%; left:50%; transform:translate(-50%,-50%);
+  text-align:center; color:#fff; font-size:20px; font-weight:700;
+  text-shadow:1px 1px 0 #000,-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000;
+  pointer-events:none; user-select:none;
+}
+
+#search-bar {
+  display:flex; position:absolute; top:50%; left:50%;
+  transform:translate(-50%,-50%); width:460px; padding:6px 8px;
+  background:rgba(255,255,255,0.88); border:2px solid var(--border);
+  box-shadow:3px 3px 0 var(--border); z-index:100; gap:8px; align-items:center;
+}
+#search-input {
+  flex:1; min-width:0; padding:4px 6px;
+  border:1px solid var(--border); color:var(--fg); background:var(--input-bg);
+  font-family:'Iosevka Aile',monospace; font-size:12px;
+}
+.search-icon { position:relative; cursor:pointer; display:flex; align-items:center; flex-shrink:0; }
+.search-icon > img { filter:var(--icon-filter); }
+.search-options {
+  display:none; position:absolute; top:100%; right:0;
+  background:var(--win-bg); border:1px solid var(--border);
+  box-shadow:2px 2px 0 var(--border); z-index:200; width:150px;
+}
+.search-icon:hover .search-options, .search-options:hover { display:block; }
+.search-option {
+  padding:5px 10px; cursor:pointer; font-size:11px;
+  display:flex; align-items:center; gap:6px; color:var(--fg);
+}
+.search-option:hover { background:var(--fg); color:var(--bg); }
+.search-option img { width:16px; height:16px; }
+
+#ytbg { position:fixed; top:0; left:0; width:100%; height:100%; z-index:-3; transform:scale(1.1); }
+#noiseCanvas { position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1; opacity:.15; pointer-events:none; }
+
+/* info window text */
+#info-window p { margin:3px 0; font-size:11px; }
+#info-window a { color:var(--fg); }
+
+/* dark mode semi-transparent overrides for elements over video */
+html.dark #search-bar { background:rgba(0,0,0,0.82); }
+html.dark .dropdown-content { background:rgba(20,20,20,0.95); }
+html.dark .side-dropdown-content { background:rgba(20,20,20,0.95); }
+</style>
+</head>
+<body>
+
+<div class="menu-bar">
+  <div class="menu-item">
+    <span class="menu-label">file</span>
+    <div class="dropdown-content">
+      <div class="dropdown-item" id="mi-getinfo">get info</div>
+      <div class="menu-div"></div>
+      <div class="dropdown-item" id="mi-darkmode">toggle dark mode</div>
+      <div class="menu-div"></div>
+      <div class="dropdown-item" id="mi-sync">sync with task strips</div>
+    </div>
+  </div>
+
+  <div class="menu-item disabled"><span class="menu-label">edit</span></div>
+
+  <div class="menu-item">
+    <span class="menu-label">view</span>
+    <div class="dropdown-content">
+      <div class="dropdown-item" id="mi-opentodo">to-do list</div>
+      <div class="menu-div"></div>
+      <div class="dropdown-item" id="mi-opennotes">notes</div>
+      <div class="menu-div"></div>
+      <div class="dropdown-item" id="mi-searchbar">search bar</div>
+    </div>
+  </div>
+
+  <div class="menu-item">
+    <span class="menu-label">options</span>
+    <div class="dropdown-content">
+      <div class="dropdown-item has-sub">reset system
+        <div class="side-dropdown-content">
+          <div class="side-dropdown-item" id="mi-preserve">preserve data</div>
+          <div class="menu-div"></div>
+          <div class="side-dropdown-item" id="mi-format">format data</div>
+        </div>
+      </div>
+      <div class="menu-div"></div>
+      <div class="dropdown-item" id="mi-addshortcut">add shortcut</div>
+      <div class="menu-div"></div>
+      <div class="dropdown-item" id="mi-changebg">change background video</div>
+      <div class="menu-div"></div>
+      <div class="dropdown-item" id="mi-welcome">customize welcome text</div>
+    </div>
+  </div>
+</div>
+
+<div class="desktop">
+
+  <div id="search-bar">
+    <input type="text" id="search-input" placeholder="search..." autocomplete="off"
+           onkeypress="if(event.keyCode===13){doSearch('Google');}">
+    <div class="search-icon">
+      <img src="https://i.imgur.com/y2vnEm2.png" style="width:30px;height:30px;" alt="search">
+      <div class="search-options">
+        <div class="search-option" onclick="doSearch('Google')"><img src="https://i.imgur.com/lG24L8z.png"> google</div>
+        <div class="search-option" onclick="doSearch('Bing')"><img src="https://i.imgur.com/6DKuHMN.png"> bing</div>
+        <div class="search-option" onclick="doSearch('Brave')"><img src="https://static-00.iconduck.com/assets.00/brave-icon-2048x2048-2wvuonpc.png"> brave</div>
+        <div class="search-option" onclick="doSearch('ChatGPT')"><img src="https://i.imgur.com/DIst8Dx.png"> chatgpt</div>
+        <div class="search-option" onclick="doSearch('DuckDuckGo')"><img src="https://i.imgur.com/6gxgb6C.png"> duckduckgo</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="welcome-text">welcome, user.</div>
+
+  <!-- To-Do Window -->
+  <div class="window" id="todo-list-window">
+    <div class="window-header">
+      <div class="window-titlebar">
+        <div class="window-close" onclick="closeWin('todo-list-window')">&#215;</div>
+        <span class="window-title">to-do list</span>
+      </div>
+    </div>
+    <div class="window-body">
+      <div class="toggleTable-parent">
+        <table id="todoTable" class="minimal">
+          <thead>
+            <tr>
+              <th onclick="sortTable(0)">task &#9662;</th>
+              <th onclick="sortTable(1)">deadline &#9662;</th>
+              <th>&#10003;</th>
+              <th>&#215;</th>
+            </tr>
+          </thead>
+          <tbody id="todoList"></tbody>
+        </table>
+        <div id="toggleBar" title="expand/collapse" onclick="toggleTable()"></div>
+      </div>
+      <div class="row-flex">
+        <input type="text" id="new-todo" class="win-input" placeholder="new task...">
+        <button id="add-todo-btn" class="win-btn">add</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="window" id="notes-window">
+    <div class="window-header">
+      <div class="window-titlebar">
+        <div class="window-close" onclick="closeWin('notes-window')">&#215;</div>
+        <span class="window-title">notes</span>
+      </div>
+    </div>
+    <div class="window-body">
+      <ul id="notes-items"></ul>
+      <div class="row-flex">
+        <input type="text" id="new-note" class="win-input" placeholder="new note...">
+        <button id="add-note-btn" class="win-btn">add</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="window" id="info-window">
+    <div class="window-header">
+      <div class="window-titlebar">
+        <div class="window-close" onclick="closeWin('info-window');localStorage.setItem('v1read','1');">&#215;</div>
+        <span class="window-title">info - solitude os v1.0</span>
+      </div>
+    </div>
+    <div class="window-body">
+      <p>welcome to solitude os.</p><br>
+      <p>use file and options menus to manage everything.</p>
+      <p>right-click a shortcut to delete it.</p>
+      <br>
+      <a href="https://tinyurl.com/solitude-os" target="_blank">learn more</a>
+      <br><br>
+      <p><strong>changelog v1.0</strong> - 13/may/2025</p>
+      <p>– dark mode (file &gt; toggle dark mode)</p>
+      <p>– task strips sync with priority color strips</p>
+      <p>– welcome text wildcards (e.g. {{timeOfDay}})</p>
+      <p>– iosevka aile font; full ui overhaul</p>
+      <div class="menu-div" style="margin:6px 0;"></div>
+      <p><strong>changelog v0.3</strong> - 18/aug/2024</p>
+      <p>– unlimited shortcuts; deadlines; sortable columns</p>
+      <div class="menu-div" style="margin:6px 0;"></div>
+      <p><strong>changelog v0.2</strong> - 15/aug/2024</p>
+      <p>– search bar; enter to search; toggle fixes</p>
+      <div class="menu-div" style="margin:6px 0;"></div>
+      <p><strong>changelog v0.1</strong> - 12/aug/2024</p>
+      <p>– initial release</p>
+      <br>
+      <p>enjoy!<br>
+      <br>- aaditya <3</p>
+    </div>
+  </div>
+
+  <div class="window" id="sync-window">
+    <div class="window-header">
+      <div class="window-titlebar">
+        <div class="window-close" onclick="closeWin('sync-window')">&#215;</div>
+        <span class="window-title">&#8644; task strips sync</span>
+      </div>
+    </div>
+    <div class="window-body">
+      <p id="sync-status"></p>
+      <ul id="sync-results"></ul>
+      <div class="row-flex" style="margin-top:8px;">
+        <button class="win-btn" style="flex:1;" onclick="doSync()">sync now</button>
+        <button class="win-btn" onclick="clearSynced()">clear history</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="window" id="welcome-modal">
+    <div class="window-header">
+      <div class="window-titlebar">
+        <div class="window-close" onclick="closeWin('welcome-modal')">&#215;</div>
+        <span class="window-title">customize welcome text</span>
+      </div>
+    </div>
+    <div class="window-body">
+      <p style="font-size:11px;margin-bottom:6px;">use <strong>{{wildcardName}}</strong> in your text. wildcards resolve at display time.</p>
+      <div class="row-flex" style="margin-bottom:8px;">
+        <input type="text" id="welcome-input" class="win-input" placeholder="good {{timeOfDay}}, user.">
+        <button class="win-btn" onclick="saveWelcomeText()">save</button>
+      </div>
+      <p style="font-size:10px;margin-bottom:4px;font-weight:700;">wildcard functions</p>
+      <table class="wildcard-table" id="wildcard-table">
+        <thead>
+          <tr>
+            <th style="width:90px;">{{name}}</th>
+            <th>js function body <span style="font-weight:400;opacity:.7;">(return a string)</span></th>
+            <th style="width:28px;"></th>
+          </tr>
+        </thead>
+        <tbody id="wildcard-body"></tbody>
+      </table>
+      <div class="row-flex" style="margin-top:6px;">
+        <input type="text" id="new-wc-name" class="win-input" placeholder="wildcard name">
+        <button class="win-btn" onclick="addWildcard()">+ add</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="shortcuts"></div>
+  <canvas id="noiseCanvas"></canvas>
+</div>
+
+<div id="ytbg"></div>
+
+<script>
+'use strict';
+(function() {
+  if (localStorage.getItem('darkMode') === '1') {
+    document.documentElement.classList.add('dark');
+  }
+})();
+
+function toggleDarkMode() {
+  var dark = document.documentElement.classList.toggle('dark');
+  localStorage.setItem('darkMode', dark ? '1' : '0');
+}
+
+var _z = 300;
+function topZ() { return ++_z; }
+
+function openWin(id) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.classList.add('visible');
+  el.style.zIndex = topZ();
+  localStorage.setItem('winopen-' + id, '1');
+}
+function closeWin(id) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.classList.remove('visible');
+  localStorage.setItem('winopen-' + id, '0');
+}
+function toggleWin(id) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  if (el.classList.contains('visible')) { closeWin(id); } else { openWin(id); }
+}
+
+function makeDraggable(el) {
+  var hdr = el.querySelector('.window-header');
+  if (!hdr) return;
+  var dragging = false, ox, oy;
+  hdr.addEventListener('mousedown', function(e) {
+    if (e.target.classList.contains('window-close')) return;
+    dragging = true;
+    var r = el.getBoundingClientRect();
+    ox = e.clientX - r.left;
+    oy = e.clientY - r.top;
+    el.style.zIndex = topZ();
+    document.addEventListener('mousemove', move);
+    document.addEventListener('mouseup', up);
+  });
+  function move(e) {
+    if (!dragging) return;
+    el.style.left = (e.clientX - ox) + 'px';
+    el.style.top  = (e.clientY - oy) + 'px';
+  }
+  function up() {
+    if (!dragging) return;
+    dragging = false;
+    document.removeEventListener('mousemove', move);
+    document.removeEventListener('mouseup', up);
+    saveWinPos(el.id);
+  }
+}
+
+function saveWinPos(id) {
+  var r = document.getElementById(id).getBoundingClientRect();
+  localStorage.setItem('wpos-' + id, JSON.stringify({left: Math.round(r.left), top: Math.round(r.top)}));
+}
+function loadWinPos(id) {
+  var raw = localStorage.getItem('wpos-' + id);
+  if (!raw) return;
+  try {
+    var pos = JSON.parse(raw);
+    var el = document.getElementById(id);
+    el.style.left   = pos.left + 'px';
+    el.style.top    = pos.top  + 'px';
+    el.style.bottom = 'auto';
+    el.style.right  = 'auto';
+  } catch(e) {}
+}
+
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+function todayStr() {
+  var n = new Date();
+  return n.getFullYear() + '-' + String(n.getMonth()+1).padStart(2,'0') + '-' + String(n.getDate()).padStart(2,'0');
+}
+
+var DEFAULT_WILDCARDS = {
+  timeOfDay: 'var h=new Date().getHours();\nif(h>=5&&h<12) return "morning";\nif(h>=12&&h<17) return "afternoon";\nif(h>=17&&h<21) return "evening";\nreturn "night";'
+};
+
+function loadWildcards() {
+  try {
+    var raw = localStorage.getItem('wildcards');
+    if (raw) {
+      return Object.assign({}, DEFAULT_WILDCARDS, JSON.parse(raw));
+    }
+  } catch(e) {}
+  return Object.assign({}, DEFAULT_WILDCARDS);
+}
+function saveWildcards(obj) {
+  localStorage.setItem('wildcards', JSON.stringify(obj));
+}
+
+function resolveWelcome(text) {
+  var wildcards = loadWildcards();
+  var lookup = {};
+  Object.keys(wildcards).forEach(function(k) { lookup[k.toLowerCase()] = k; });
+
+  return text.replace(/\{\{(\w+)\}\}/g, function(match, name) {
+    // match case-insensitively
+    var key = lookup[name.toLowerCase()];
+    if (!key) return match;
+    try {
+      var fn = new Function(wildcards[key]);
+      var result = fn();
+      return result != null ? String(result) : match;
+    } catch(e) {
+      return match;
+    }
+  });
+}
+
+function updateWelcome() {
+  var el = document.getElementById('welcome-text');
+  var raw = localStorage.getItem('welcomeText') || 'welcome, user.';
+  var resolved = resolveWelcome(raw);
+  el.textContent = resolved.charAt(0).toUpperCase() + resolved.slice(1);
+}
+
+setInterval(updateWelcome, 60000);
+
+function openWelcomeModal() {
+  var current = localStorage.getItem('welcomeText') || 'welcome, user.';
+  document.getElementById('welcome-input').value = current;
+  renderWildcardTable();
+  openWin('welcome-modal');
+}
+
+function saveWelcomeText() {
+  var val = document.getElementById('welcome-input').value.trim();
+  if (!val) return;
+  localStorage.setItem('welcomeText', val.toLowerCase());
+  updateWelcome();
+  closeWin('welcome-modal');
+}
+
+function renderWildcardTable() {
+  var wildcards = loadWildcards();
+  var tbody = document.getElementById('wildcard-body');
+  tbody.innerHTML = '';
+  Object.keys(wildcards).forEach(function(name) {
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td style="font-weight:700;font-size:10px;vertical-align:top;padding-top:5px;">{{' + esc(name) + '}}</td>' +
+      '<td><textarea class="fn-editor" data-wc="' + esc(name) + '" onchange="updateWildcardFn(\'' + esc(name) + '\',this.value)">' + esc(wildcards[name]) + '</textarea></td>' +
+      '<td style="text-align:center;vertical-align:top;padding-top:3px;">' +
+        '<button class="win-btn" style="font-size:9px;padding:1px 4px;" onclick="deleteWildcard(\'' + esc(name) + '\')">&#215;</button>' +
+      '</td>';
+    tbody.appendChild(tr);
+  });
+}
+
+function addWildcard() {
+  var name = document.getElementById('new-wc-name').value.trim().replace(/\W/g,'');
+  if (!name) { alert('enter a valid name (letters/numbers/underscore only)'); return; }
+  var wildcards = loadWildcards();
+  if (wildcards[name]) { alert('wildcard "' + name + '" already exists'); return; }
+  wildcards[name] = 'return "' + name + '";';
+  saveWildcards(wildcards);
+  document.getElementById('new-wc-name').value = '';
+  renderWildcardTable();
+}
+
+function updateWildcardFn(name, val) {
+  var wildcards = loadWildcards();
+  wildcards[name] = val;
+  saveWildcards(wildcards);
+}
+
+function deleteWildcard(name) {
+  if (!confirm('delete wildcard {{' + name + '}}?')) return;
+  var wildcards = loadWildcards();
+  delete wildcards[name];
+  saveWildcards(wildcards);
+  renderWildcardTable();
+}
+
+function saveData() {
+  var todos = [];
+  document.querySelectorAll('#todoList tr').forEach(function(row) {
+    var cb = row.cells[2] && row.cells[2].querySelector('input[type="checkbox"]');
+    todos.push({
+      text:      row.cells[0] ? row.cells[0].innerText.trim() : '',
+      deadline:  row.cells[1] ? row.cells[1].innerText.trim() : '',
+      completed: cb ? cb.checked : false,
+      priority:  row.getAttribute('data-priority') || null
+    });
+  });
+
+  var notes = [];
+  document.querySelectorAll('#notes-items li span').forEach(function(s) {
+    notes.push(s.textContent.trim());
+  });
+
+  var shortcuts = [];
+  document.querySelectorAll('#shortcuts .shortcut').forEach(function(s) {
+    shortcuts.push({name: s.getAttribute('data-name'), url: s.getAttribute('data-url')});
+  });
+
+  localStorage.setItem('todos', JSON.stringify(todos));
+  localStorage.setItem('notes', JSON.stringify(notes));
+  localStorage.setItem('shortcuts', JSON.stringify(shortcuts));
+}
+
+function loadData() {
+  // todos
+  var todos = [];
+  try { todos = JSON.parse(localStorage.getItem('todos')) || []; } catch(e) {}
+  todos.forEach(function(t) { addTodoRow(t.text, t.deadline, t.completed, t.priority); });
+
+  var notes = [];
+  try { notes = JSON.parse(localStorage.getItem('notes')) || []; } catch(e) {}
+  notes.forEach(appendNote);
+
+  var shortcuts = [];
+  try { shortcuts = JSON.parse(localStorage.getItem('shortcuts')) || []; } catch(e) {}
+  shortcuts.forEach(function(s) { createShortcut(s.url, s.name, false); });
+
+  if (localStorage.getItem('searchBarHidden') === '1') {
+    document.getElementById('search-bar').style.display = 'none';
+  }
+
+  updateWelcome();
+  loadTableVersion();
+
+  ['todo-list-window','notes-window','sync-window'].forEach(function(id) {
+    loadWinPos(id);
+    var pref = localStorage.getItem('winopen-' + id);
+    var defaultOpen = (id === 'todo-list-window' || id === 'notes-window');
+    if (pref === '1' || (pref === null && defaultOpen)) { openWin(id); }
+  });
+
+  if (!localStorage.getItem('v1read')) {
+    openWin('info-window');
+  }
+
+  checkTaskStrips();
+}
+
+function addTodoRow(text, deadline, completed, priority) {
+  if (!text) return;
+  var tr = document.createElement('tr');
+  if (priority) tr.setAttribute('data-priority', priority);
+  tr.innerHTML =
+    '<td class="task">' + esc(text) + '</td>' +
+    '<td>' + esc(deadline || '') + '</td>' +
+    '<td style="text-align:center;"><input type="checkbox" onchange="saveData()"' + (completed ? ' checked' : '') + '></td>' +
+    '<td style="text-align:center;"><button class="win-btn" style="font-size:9px;padding:1px 4px;" onclick="this.closest(\'tr\').remove();saveData();">&#215;</button></td>';
+  document.getElementById('todoList').appendChild(tr);
+}
+
+function addTodo() {
+  var text = document.getElementById('new-todo').value.trim();
+  if (!text) return;
+  var dl = prompt('deadline (yyyy-mm-dd):', todayStr());
+  if (dl === null) dl = '';
+  addTodoRow(text, dl, false, null);
+  document.getElementById('new-todo').value = '';
+  saveData();
+}
+
+function sortTable(col) {
+  var tbody = document.getElementById('todoList');
+  var rows = Array.from(tbody.rows);
+  var table = document.getElementById('todoTable');
+  var asc = table.getAttribute('data-sort') === 'asc';
+  rows.sort(function(a, b) {
+    var ca = a.cells[col] ? a.cells[col].innerText.trim() : '';
+    var cb = b.cells[col] ? b.cells[col].innerText.trim() : '';
+    if (col === 1) return asc ? new Date(ca)-new Date(cb) : new Date(cb)-new Date(ca);
+    return asc ? ca.localeCompare(cb) : cb.localeCompare(ca);
+  });
+  table.setAttribute('data-sort', asc ? 'desc' : 'asc');
+  rows.forEach(function(r) { tbody.appendChild(r); });
+}
+
+function toggleTable() {
+  var t = document.getElementById('todoTable');
+  setTableVersion(t.classList.contains('minimal') ? 'full' : 'minimal');
+}
+function setTableVersion(v) {
+  var t   = document.getElementById('todoTable');
+  var win = document.getElementById('todo-list-window');
+  t.classList.remove('minimal','full');
+  t.classList.add(v);
+  win.style.width = (v === 'full') ? '460px' : '300px';
+  localStorage.setItem('tableVersion', v);
+}
+function loadTableVersion() {
+  setTableVersion(localStorage.getItem('tableVersion') || 'minimal');
+}
+
+function appendNote(text) {
+  if (!text) return;
+  var li = document.createElement('li');
+  li.innerHTML = '<span>' + esc(text) + '</span>' +
+    '<button class="win-btn" style="font-size:9px;padding:1px 4px;" onclick="this.parentElement.remove();saveData();">&#215;</button>';
+  document.getElementById('notes-items').appendChild(li);
+}
+function addNote() {
+  var text = document.getElementById('new-note').value.trim();
+  if (!text) return;
+  appendNote(text);
+  document.getElementById('new-note').value = '';
+  saveData();
+}
+
+function createShortcut(url, name, doSave) {
+  var div = document.createElement('div');
+  div.className = 'shortcut';
+  div.setAttribute('data-url', url);
+  div.setAttribute('data-name', name);
+  div.innerHTML =
+    '<img src="https://i.imgur.com/lHY3gEw.png" style="width:50px;height:50px;display:block;">' +
+    '<span class="shortcut-text">' + esc(name) + '</span>';
+  div.addEventListener('click', function() { window.open(url, '_blank'); });
+  div.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+    if (confirm('delete shortcut "' + name + '"?')) { div.remove(); saveData(); }
+  });
+  document.getElementById('shortcuts').appendChild(div);
+  if (doSave !== false) saveData();
+}
+
+function doSearch(engine) {
+  var q = encodeURIComponent(document.getElementById('search-input').value);
+  var map = {
+    Google:     'https://www.google.com/search?q=',
+    Bing:       'https://www.bing.com/search?q=',
+    Brave:      'https://search.brave.com/search?q=',
+    ChatGPT:    'https://chat.openai.com/?q=',
+    DuckDuckGo: 'https://duckduckgo.com/?q='
+  };
+  if (map[engine]) window.open(map[engine] + q, '_blank');
+}
+function toggleSearchBar() {
+  var bar = document.getElementById('search-bar');
+  var hiding = bar.style.display !== 'none';
+  bar.style.display = hiding ? 'none' : 'flex';
+  localStorage.setItem('searchBarHidden', hiding ? '1' : '0');
+}
+
+function checkTaskStrips() {
+  try {
+    var tasks = JSON.parse(localStorage.getItem('taskStrips') || '[]');
+    if (tasks.length > 0) {
+      document.getElementById('mi-sync').textContent = 'sync with task strips (' + tasks.length + ')';
+    }
+  } catch(e) {}
+}
+
+function doSync() {
+  var statusEl = document.getElementById('sync-status');
+  var listEl   = document.getElementById('sync-results');
+  listEl.innerHTML = '';
+
+  var tasks = [];
+  try { tasks = JSON.parse(localStorage.getItem('taskStrips') || '[]'); } catch(e) {
+    statusEl.textContent = '✕ could not parse task strips data.'; return;
+  }
+  if (!tasks.length) { statusEl.textContent = '⚠ no task strips data in this browser.'; return; }
+
+  var existing = new Set();
+  document.querySelectorAll('#todoList tr td.task').forEach(function(td) {
+    existing.add(td.innerText.trim().toLowerCase());
+  });
+
+  var synced = new Set();
+  try { synced = new Set(JSON.parse(localStorage.getItem('sol-synced') || '[]')); } catch(e) {}
+
+  var added = 0;
+  var pcolor = {high:'#cc2200', med:'#cc8800', low:'#228833'};
+
+  tasks.forEach(function(task) {
+    var desc = String(task.description || task.callsign || '');
+    var isNew = !synced.has(task.callsign) && !existing.has(desc.toLowerCase());
+
+    var li = document.createElement('li');
+    var col = pcolor[task.priority] || '#888';
+    li.innerHTML =
+      '<span style="display:flex;align-items:center;flex:1;overflow:hidden;gap:5px;">' +
+        '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:' + col + ';flex-shrink:0;"></span>' +
+        '<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + esc(desc) + '">' +
+          '<strong>' + esc(task.callsign || '') + '</strong> ' + esc(desc) +
+        '</span>' +
+      '</span>' +
+      '<span class="sync-tag' + (isNew ? ' new' : '') + '">' + (isNew ? 'new' : 'exists') + '</span>';
+    listEl.appendChild(li);
+
+    if (isNew) {
+      var deadline = '';
+      if (task.deadline) {
+        try { deadline = new Date(task.deadline).toLocaleDateString('en-US',{year:'numeric',month:'2-digit',day:'2-digit'}); } catch(e) {}
+      }
+      var pri = {high:'high', med:'med', low:'low'}[task.priority] || 'none';
+      addTodoRow(desc, deadline, false, pri);
+      synced.add(task.callsign);
+      existing.add(desc.toLowerCase());
+      added++;
+    }
+  });
+
+  localStorage.setItem('sol-synced', JSON.stringify(Array.from(synced)));
+  saveData();
+  openWin('todo-list-window');
+  statusEl.textContent = added > 0
+    ? '✓ imported ' + added + ' task(s).'
+    : '✓ all ' + tasks.length + ' task(s) already present.';
+}
+
+function clearSynced() {
+  localStorage.removeItem('sol-synced');
+  document.getElementById('sync-status').textContent = 'history cleared - next sync re-evaluates all.';
+}
+
+(function() {
+  var canvas = document.getElementById('noiseCanvas');
+  var ctx = canvas.getContext('2d');
+  function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+  function draw() {
+    var img = ctx.createImageData(canvas.width, canvas.height);
+    var d = img.data;
+    for (var i = 0; i < d.length; i += 4) {
+      var v = Math.random() * 255 | 0;
+      d[i] = d[i+1] = d[i+2] = v; d[i+3] = 255;
+    }
+    ctx.putImageData(img, 0, 0);
+  }
+  window.addEventListener('resize', resize);
+  resize();
+  setInterval(draw, 100);
+})();
+
+document.addEventListener('DOMContentLoaded', function() {
+
+  (function() {
+    var def = 'https://www.youtube.com/watch?v=mN2VLo-74BE';
+    var saved = localStorage.getItem('bgVideoURL') || def;
+    if (!localStorage.getItem('bgVideoURL')) localStorage.setItem('bgVideoURL', def);
+
+    var ytbg = document.getElementById('ytbg');
+    ytbg.setAttribute('data-youtube', saved);
+
+    var youtubeURL = saved;
+    var videoID = youtubeURL.split('v=')[1];
+    if (videoID) {
+      var amp = videoID.indexOf('&');
+      if (amp !== -1) videoID = videoID.substring(0, amp);
+
+      var embedURL = 'https://www.youtube.com/embed/' + videoID + '?autoplay=1&mute=1&loop=1&playlist=' + videoID;
+
+      var iframe = document.createElement('iframe');
+      iframe.src = embedURL;
+      iframe.style.position = 'absolute';
+      iframe.style.top = '0';
+      iframe.style.left = '0';
+      iframe.style.width = '100%';
+      iframe.style.height = '100%';
+      iframe.style.zIndex = '-2';
+      iframe.style.border = 'none';
+      iframe.allow = 'autoplay';
+      ytbg.appendChild(iframe);
+    }
+  })();
+
+
+  document.querySelectorAll('.window').forEach(makeDraggable);
+
+  document.getElementById('mi-getinfo').addEventListener('click', function(e) {
+    e.stopPropagation(); openWin('info-window');
+  });
+  document.getElementById('mi-darkmode').addEventListener('click', function(e) {
+    e.stopPropagation(); toggleDarkMode();
+  });
+  document.getElementById('mi-sync').addEventListener('click', function(e) {
+    e.stopPropagation(); openWin('sync-window'); doSync();
+  });
+  document.getElementById('mi-opentodo').addEventListener('click', function(e) {
+    e.stopPropagation(); toggleWin('todo-list-window');
+  });
+  document.getElementById('mi-opennotes').addEventListener('click', function(e) {
+    e.stopPropagation(); toggleWin('notes-window');
+  });
+  document.getElementById('mi-searchbar').addEventListener('click', function(e) {
+    e.stopPropagation(); toggleSearchBar();
+  });
+  document.getElementById('mi-preserve').addEventListener('click', function(e) {
+    e.stopPropagation();
+    ['wpos-todo-list-window','wpos-notes-window','wpos-sync-window','wpos-info-window','wpos-welcome-modal']
+      .forEach(function(k) { localStorage.removeItem(k); });
+    location.reload();
+  });
+  document.getElementById('mi-format').addEventListener('click', function(e) {
+    e.stopPropagation();
+    if (confirm('clear ALL solitude os data?')) { localStorage.clear(); location.reload(); }
+  });
+  document.getElementById('mi-addshortcut').addEventListener('click', function(e) {
+    e.stopPropagation();
+    var url  = prompt('enter url:');
+    var name = prompt('enter name:');
+    if (url && name) createShortcut(url, name, true);
+  });
+  document.getElementById('mi-changebg').addEventListener('click', function(e) {
+    e.stopPropagation();
+    var url = prompt('enter youtube url:');
+    if (url) { localStorage.setItem('bgVideoURL', url); location.reload(); }
+  });
+  document.getElementById('mi-welcome').addEventListener('click', function(e) {
+    e.stopPropagation(); openWelcomeModal();
+  });
+
+  document.getElementById('add-todo-btn').addEventListener('click', addTodo);
+  document.getElementById('new-todo').addEventListener('keypress', function(e) { if(e.key==='Enter') addTodo(); });
+
+  document.getElementById('add-note-btn').addEventListener('click', addNote);
+  document.getElementById('new-note').addEventListener('keypress', function(e) { if(e.key==='Enter') addNote(); });
+
+  loadData();
+});
+</script>
+</body>
+</html>
