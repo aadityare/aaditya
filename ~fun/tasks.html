@@ -1025,7 +1025,6 @@ Created On     : 2026-01-29
             noteModal.classList.remove('active');
         });
 
-        // Dark mode
         const darkModeBtn = document.getElementById('darkModeBtn');
         const savedTheme = localStorage.getItem('theme');
         
@@ -1041,7 +1040,6 @@ Created On     : 2026-01-29
             localStorage.setItem('theme', isDark ? 'dark' : 'light');
         });
 
-        // Initialize
         renderTasks();
         renderNotes();
 
