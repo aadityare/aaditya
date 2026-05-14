@@ -1,24 +1,32 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <title>solitude os</title>
-  <style>
-    body { background:#000; margin:0; }
-    iframe { border:0; width:100%; height:100vh; display:block; }
-  </style>
+    <title>solitude os</title>
+    <style>
+        body {
+            background-color: #000000;
+            margin: 0;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .container iframe {
+            border: 0;
+        }
+    </style>
 </head>
+
 <body>
-  <iframe id="sol" src="https://www.aadi.zip/~fun/solitude-os.html"></iframe>
-  <script>
-    window.addEventListener('message', function(e) {
-      if (!e.data || e.data.type !== 'SOL_GET_TASKSTRIPS') return;
-      chrome.storage.local.get('taskStrips', function(result) {
-        document.getElementById('sol').contentWindow.postMessage({
-          type: 'SOL_TASKSTRIPS_DATA',
-          data: JSON.stringify(result.taskStrips || [])
-        }, '*');
-      });
-    });
-  </script>
+    <div class="container">
+        <iframe src="https://aadi.zip/~fun/solitude-os.html" width="100%" height="100%"></iframe>
+    </div>
 </body>
+
 </html>

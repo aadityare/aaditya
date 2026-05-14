@@ -1,6 +1,6 @@
 {
   "name": "solitude os",
-  "description": "solitude os — a cool landing page",
+  "description": "solitude os, a cool landing page",
   "version": "1.0.0",
   "manifest_version": 3,
   "icons": {
@@ -10,9 +10,5 @@
   "chrome_url_overrides": {
     "newtab": "tab_override.html"
   },
-  "permissions": ["tabs", "storage"],
-  "content_security_policy":
-  {
-    "extension_pages": "script-src 'self' 'unsafe-inline'; object-src 'self'"
-  }
+  "permissions": ["tabs"]
 }

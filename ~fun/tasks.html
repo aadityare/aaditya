@@ -28,7 +28,6 @@ Created On     : 2026-01-29
             --strip-border: #999;
             font-size: 24px;
         }
-
         body.dark {
             --bg: #0c0c0c;
             --fg: #fcfcfa;
@@ -36,491 +35,144 @@ Created On     : 2026-01-29
             --strip-bg: #2a2a2a;
             --strip-border: #555;
         }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            background: var(--bg);
-            color: var(--fg);
+            background: var(--bg); color: var(--fg);
             font-family: 'Space Grotesk', sans-serif;
-            line-height: 1.6;
-            min-height: 100vh;
-            overflow-x: hidden;
-            transition: background .3s, color .3s;
+            line-height: 1.6; min-height: 100vh;
+            overflow-x: hidden; transition: background .3s, color .3s;
         }
-
         body::before {
-            content: "";
-            position: fixed;
-            inset: 0;
-            z-index: -1;
+            content: ""; position: fixed; inset: 0; z-index: -1;
             background-image: radial-gradient(circle, var(--dot) 1px, transparent 1px);
-            background-size: 24px 24px;
-            animation: grid 45s linear infinite;
+            background-size: 24px 24px; animation: grid 45s linear infinite;
         }
-
-        @keyframes grid {
-            to {
-                background-position: 300px 300px;
-            }
-        }
-
+        @keyframes grid { to { background-position: 300px 300px; } }
         nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 2rem;
-            border-bottom: var(--border);
-            background: var(--bg);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 1rem 2rem; border-bottom: var(--border);
+            background: var(--bg); position: sticky; top: 0; z-index: 100;
         }
-
-        nav h1 {
-            font-size: 1rem;
-            font-weight: 700;
-            text-transform: lowercase;
-        }
-
-        .nav-actions {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-
+        nav h1 { font-size: 1rem; font-weight: 700; text-transform: lowercase; }
+        .nav-actions { display: flex; gap: 1rem; align-items: center; }
         button {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: .75rem;
-            text-transform: lowercase;
-            padding: .5rem 1rem;
-            border: var(--border);
-            background: var(--bg);
-            color: var(--fg);
-            cursor: pointer;
-            border-radius: 20px;
-            transition: .3s;
+            font-family: 'IBM Plex Mono', monospace; font-size: .75rem;
+            text-transform: lowercase; padding: .5rem 1rem;
+            border: var(--border); background: var(--bg); color: var(--fg);
+            cursor: pointer; border-radius: 20px; transition: .3s;
         }
-
-        button:hover {
-            background: var(--accent);
-            color: #fff;
-            border-color: var(--accent);
-        }
-
+        button:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
         .time-display {
-            display: flex;
-            gap: 2rem;
-            padding: 1rem 2rem;
-            background: var(--bg);
-            border-bottom: var(--border);
-            flex-wrap: wrap;
+            display: flex; gap: 2rem; padding: 1rem 2rem;
+            background: var(--bg); border-bottom: var(--border); flex-wrap: wrap;
         }
-
-        .time-block {
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .time-label {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: .6rem;
-            text-transform: uppercase;
-            opacity: .6;
-            margin-bottom: .2rem;
-        }
-
-        .time-value {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 1.2rem;
-            font-weight: 700;
-            letter-spacing: -1px;
-        }
-
-        .time-date {
-            font-size: .65rem;
-            margin-top: .2rem;
-            opacity: .7;
-        }
-
-        .time-info {
-            font-size: .6rem;
-            margin-top: .2rem;
-            opacity: .5;
-            font-style: italic;
-        }
-
+        .time-block { flex: 1; min-width: 200px; }
+        .time-label { font-family: 'IBM Plex Mono', monospace; font-size: .6rem; text-transform: uppercase; opacity: .6; margin-bottom: .2rem; }
+        .time-value { font-family: 'IBM Plex Mono', monospace; font-size: 1.2rem; font-weight: 700; letter-spacing: -1px; }
+        .time-date { font-size: .65rem; margin-top: .2rem; opacity: .7; }
         .container {
-            display: flex;
-            gap: 1.5rem;
-            max-width: 1600px;
-            margin: 0 auto;
-            padding: 1.5rem 1rem;
-            align-items: flex-start;
+            display: flex; gap: 1.5rem; max-width: 1600px;
+            margin: 0 auto; padding: 1.5rem 1rem; align-items: flex-start;
         }
-
-        .main-section {
-            flex: 1;
-        }
-
-        .sidebar {
-            width: 35%;
-            position: sticky;
-            top: 200px;
-            max-height: calc(100vh - 220px);
-            overflow-y: auto;
-        }
-
-        .section {
-            margin-bottom: 1.5rem;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .section-title {
-            font-size: 1rem;
-            font-weight: 700;
-            text-transform: lowercase;
-        }
-
-        /* Flight Strips Style */
-        .strips-container {
-            display: flex;
-            flex-direction: column;
-            gap: .4rem;
-        }
-
+        .main-section { flex: 1; }
+        .sidebar { width: 35%; position: sticky; top: 200px; max-height: calc(100vh - 220px); overflow-y: auto; }
+        .section { margin-bottom: 1.5rem; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .section-title { font-size: 1rem; font-weight: 700; text-transform: lowercase; }
+        .strips-container { display: flex; flex-direction: column; gap: .4rem; }
         .task-strip {
-            background: var(--strip-bg);
-            border: 2px solid var(--strip-border);
-            padding: 0;
-            display: grid;
+            background: var(--strip-bg); border: 2px solid var(--strip-border);
+            padding: 0; display: grid;
             grid-template-columns: 28px 80px 1fr 90px 100px 90px;
-            min-height: 50px;
-            font-family: 'IBM Plex Mono', monospace;
-            position: relative;
-            transition: transform .2s, box-shadow .2s;
+            min-height: 50px; font-family: 'IBM Plex Mono', monospace;
+            position: relative; transition: transform .2s, box-shadow .2s;
         }
-
-        .task-strip:not(.dragging):hover {
-            transform: translateX(4px);
-            box-shadow: -4px 4px 0 var(--accent);
-        }
-
-        .task-strip.dragging {
-            opacity: .4;
-            border-style: dashed;
-        }
-
-        .task-strip.drag-over {
-            border-top: 3px solid var(--accent);
-        }
-
-        /* Drag handle */
+        .task-strip:not(.dragging):hover { transform: translateX(4px); box-shadow: -4px 4px 0 var(--accent); }
+        .task-strip.dragging { opacity: .4; border-style: dashed; }
+        .task-strip.drag-over { border-top: 3px solid var(--accent); }
         .drag-handle {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: grab;
-            color: var(--strip-border);
-            font-size: .85rem;
-            border-right: 1px solid var(--strip-border);
-            user-select: none;
+            display: flex; align-items: center; justify-content: center;
+            cursor: grab; color: var(--strip-border); font-size: .85rem;
+            border-right: 1px solid var(--strip-border); user-select: none;
             transition: color .2s, background .2s;
         }
-
-        .drag-handle:hover {
-            color: var(--accent);
-            background: rgba(255,85,0,.06);
-        }
-
-        .drag-handle:active {
-            cursor: grabbing;
-        }
-
+        .drag-handle:hover { color: var(--accent); background: rgba(255,85,0,.06); }
+        .drag-handle:active { cursor: grabbing; }
         .strip-section {
-            padding: .6rem;
-            border-right: 1px solid var(--strip-border);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+            padding: .6rem; border-right: 1px solid var(--strip-border);
+            display: flex; flex-direction: column; justify-content: center;
         }
-
-        .strip-section:last-child {
-            border-right: none;
-        }
-
-        .strip-callsign {
-            font-size: .95rem;
-            font-weight: 700;
-            letter-spacing: .5px;
-        }
-
-        .strip-type {
-            font-size: .55rem;
-            opacity: .6;
-            text-transform: uppercase;
-            margin-top: .1rem;
-        }
-
-        .strip-task {
-            font-size: .75rem;
-            line-height: 1.3;
-        }
-
-        .strip-notes {
-            font-size: .65rem;
-            opacity: .7;
-            margin-top: .2rem;
-        }
-
-        .strip-priority {
-            font-size: .6rem;
-            text-transform: uppercase;
-            font-weight: 600;
-        }
-
+        .strip-section:last-child { border-right: none; }
+        .strip-callsign { font-size: .95rem; font-weight: 700; letter-spacing: .5px; }
+        .strip-type { font-size: .55rem; opacity: .6; text-transform: uppercase; margin-top: .1rem; }
+        .strip-task { font-size: .75rem; line-height: 1.3; }
+        .strip-notes { font-size: .65rem; opacity: .7; margin-top: .2rem; }
+        .strip-priority { font-size: .6rem; text-transform: uppercase; font-weight: 600; }
         .priority-high { color: var(--danger); }
         .priority-med { color: var(--warning); }
         .priority-low { color: var(--success); }
-
-        .strip-elapsed {
-            font-size: .65rem;
-            opacity: .6;
-            margin-top: .2rem;
-        }
-
-        .strip-deadline {
-            font-size: .7rem;
-            font-weight: 600;
-        }
-
-        .strip-actions {
-            display: flex;
-            flex-direction: column;
-            gap: .2rem;
-            padding: .4rem;
-        }
-
-        .strip-btn {
-            font-size: .55rem;
-            padding: .25rem .4rem;
-            border-radius: 3px;
-            border: 1px solid var(--strip-border);
-        }
-
-        .strip-btn.complete {
-            background: var(--success);
-            color: #fff;
-            border-color: var(--success);
-        }
-
-        .strip-btn.delete {
-            background: var(--danger);
-            color: #fff;
-            border-color: var(--danger);
-        }
-
-        .strip-btn.edit {
-            background: var(--warning);
-            color: #000;
-            border-color: var(--warning);
-        }
-
-        .strip-btn:hover {
-            opacity: .8;
-        }
-
-        /* Sticky Notes */
-        .notes-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
+        .strip-elapsed { font-size: .65rem; opacity: .6; margin-top: .2rem; }
+        .strip-deadline { font-size: .7rem; font-weight: 600; }
+        .strip-actions { display: flex; flex-direction: column; gap: .2rem; padding: .4rem; }
+        .strip-btn { font-size: .55rem; padding: .25rem .4rem; border-radius: 3px; border: 1px solid var(--strip-border); }
+        .strip-btn.complete { background: var(--success); color: #fff; border-color: var(--success); }
+        .strip-btn.delete { background: var(--danger); color: #fff; border-color: var(--danger); }
+        .strip-btn.edit { background: var(--warning); color: #000; border-color: var(--warning); }
+        .strip-btn:hover { opacity: .8; }
+        .notes-grid { display: flex; flex-direction: column; gap: 1rem; }
         .sticky-note {
-            background: #ffd700;
-            padding: 1rem;
-            min-height: 120px;
-            border: none;
-            box-shadow: 2px 2px 6px rgba(0,0,0,.2);
-            position: relative;
-            transform: rotate(-1deg);
+            background: #ffd700; padding: 1rem; min-height: 120px;
+            border: none; box-shadow: 2px 2px 6px rgba(0,0,0,.2);
+            position: relative; transform: rotate(-1deg);
             transition: transform .2s, box-shadow .2s;
         }
-
-        .sticky-note:nth-child(even) {
-            transform: rotate(1deg);
-            background: #98fb98;
-        }
-
-        .sticky-note:nth-child(3n) {
-            background: #ffb6c1;
-        }
-
-        .sticky-note:hover {
-            transform: rotate(0deg) scale(1.02);
-            box-shadow: 4px 4px 10px rgba(0,0,0,.3);
-            z-index: 10;
-        }
-
-        .note-content {
-            font-size: .75rem;
-            line-height: 1.4;
-            color: #000;
-            word-wrap: break-word;
-        }
-
-        .note-time {
-            font-size: .55rem;
-            opacity: .6;
-            margin-top: .75rem;
-            color: #000;
-        }
-
+        .sticky-note:nth-child(even) { transform: rotate(1deg); background: #98fb98; }
+        .sticky-note:nth-child(3n) { background: #ffb6c1; }
+        .sticky-note:hover { transform: rotate(0deg) scale(1.02); box-shadow: 4px 4px 10px rgba(0,0,0,.3); z-index: 10; }
+        .note-content { font-size: .75rem; line-height: 1.4; color: #000; word-wrap: break-word; }
+        .note-time { font-size: .55rem; opacity: .6; margin-top: .75rem; color: #000; }
         .note-delete {
-            position: absolute;
-            top: .4rem;
-            right: .4rem;
-            background: rgba(0,0,0,.1);
-            border: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            font-size: .65rem;
-            padding: 0;
-            cursor: pointer;
-            color: #000;
+            position: absolute; top: .4rem; right: .4rem;
+            background: rgba(0,0,0,.1); border: none; width: 20px; height: 20px;
+            border-radius: 50%; font-size: .65rem; padding: 0; cursor: pointer; color: #000;
         }
-
-        .note-delete:hover {
-            background: rgba(0,0,0,.3);
-        }
-
-        /* Modal */
+        .note-delete:hover { background: rgba(0,0,0,.3); }
         .modal {
-            position: fixed;
-            inset: 0;
-            z-index: 999;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(6px);
-            display: none;
-            align-items: center;
-            justify-content: center;
+            position: fixed; inset: 0; z-index: 999;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(6px);
+            display: none; align-items: center; justify-content: center;
         }
-
-        .modal.active {
-            display: flex;
-        }
-
+        .modal.active { display: flex; }
         .modal-content {
-            max-width: 600px;
-            width: 90%;
-            padding: 2rem;
-            background: var(--bg);
-            border: var(--border);
-            border-radius: 10px;
-            max-height: 90vh;
-            overflow-y: auto;
+            max-width: 600px; width: 90%; padding: 2rem;
+            background: var(--bg); border: var(--border);
+            border-radius: 10px; max-height: 90vh; overflow-y: auto;
         }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .modal h2 {
-            font-size: 1.2rem;
-            text-transform: lowercase;
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 0;
-            width: 30px;
-            height: 30px;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        label {
-            display: block;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: .75rem;
-            text-transform: lowercase;
-            margin-bottom: .5rem;
-        }
-
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .modal h2 { font-size: 1.2rem; text-transform: lowercase; }
+        .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; padding: 0; width: 30px; height: 30px; }
+        .form-group { margin-bottom: 1.5rem; }
+        label { display: block; font-family: 'IBM Plex Mono', monospace; font-size: .75rem; text-transform: lowercase; margin-bottom: .5rem; }
         input, select, textarea {
-            width: 100%;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: .85rem;
-            padding: .75rem;
-            border: var(--border);
-            background: var(--bg);
-            color: var(--fg);
-            border-radius: 4px;
+            width: 100%; font-family: 'IBM Plex Mono', monospace; font-size: .85rem;
+            padding: .75rem; border: var(--border); background: var(--bg);
+            color: var(--fg); border-radius: 4px;
         }
-
-        textarea {
-            resize: vertical;
-            min-height: 100px;
-            font-family: 'Space Grotesk', sans-serif;
+        textarea { resize: vertical; min-height: 100px; font-family: 'Space Grotesk', sans-serif; }
+        .empty-state { text-align: center; padding: 3rem 1rem; opacity: .5; font-style: italic; }
+        .export-textarea {
+            width: 100%; font-family: 'IBM Plex Mono', monospace; font-size: .6rem;
+            padding: .5rem; border: var(--border); background: var(--bg);
+            color: var(--fg); border-radius: 4px; resize: vertical;
         }
-
-        .empty-state {
-            text-align: center;
-            padding: 3rem 1rem;
-            opacity: .5;
-            font-style: italic;
-        }
-
+        .copy-btn-row { display: flex; gap: .5rem; margin-top: .5rem; }
         @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
-            }
-
-            .sidebar {
-                width: 100%;
-                position: relative;
-                top: 0;
-                max-height: none;
-            }
-
-            .task-strip {
-                grid-template-columns: 28px 1fr;
-                min-height: auto;
-            }
-
-            .strip-section {
-                border-right: none;
-                border-bottom: 1px solid var(--strip-border);
-            }
-
-            .strip-section:last-child {
-                border-bottom: none;
-            }
-
-            .time-display {
-                flex-direction: column;
-                gap: 1rem;
-            }
+            .container { flex-direction: column; }
+            .sidebar { width: 100%; position: relative; top: 0; max-height: none; }
+            .task-strip { grid-template-columns: 28px 1fr; min-height: auto; }
+            .strip-section { border-right: none; border-bottom: 1px solid var(--strip-border); }
+            .strip-section:last-child { border-bottom: none; }
+            .time-display { flex-direction: column; gap: 1rem; }
         }
     </style>
 </head>
@@ -531,6 +183,7 @@ Created On     : 2026-01-29
             <button id="addTaskBtn">+ add task</button>
             <button id="addNoteBtn">+ note</button>
             <button id="darkModeBtn">dark mode</button>
+            <button id="exportBtn" style="font-size:.45rem;padding:.2rem .5rem;opacity:.6;">&#8597; export for solitude</button>
         </div>
     </nav>
 
@@ -538,14 +191,13 @@ Created On     : 2026-01-29
         <div class="time-block">
             <div class="time-label">local time</div>
             <div class="time-value" id="localTime">00:00:00</div>
-            <div class="time-date" id="localDate">Loading...</div>
-            <div class="time-info" id="localTimezone">GMT+0</div>
+            <div class="time-date" id="localDate">loading...</div>
+            <div class="time-date" id="localTimezone">gmt+0</div>
         </div>
         <div class="time-block">
             <div class="time-label">zulu time (utc)</div>
             <div class="time-value" id="zuluTime">00:00:00</div>
-            <div class="time-date" id="zuluDate">Loading...</div>
-            <!-- <div class="time-info">Coordinated Universal Time</div> -->
+            <div class="time-date" id="zuluDate">loading...</div>
         </div>
     </div>
 
@@ -556,11 +208,10 @@ Created On     : 2026-01-29
                     <h2 class="section-title">task strips</h2>
                 </div>
                 <div class="strips-container" id="stripsContainer">
-                    <div class="empty-state">no tasks yet. click "+ add task strip" to begin.</div>
+                    <div class="empty-state">no tasks yet. click "+ add task" to begin.</div>
                 </div>
             </div>
         </div>
-
         <div class="sidebar">
             <div class="section">
                 <div class="section-header">
@@ -578,7 +229,7 @@ Created On     : 2026-01-29
         <div class="modal-content">
             <div class="modal-header">
                 <h2>add task</h2>
-                <button class="close-btn" id="closeTaskModal">✕</button>
+                <button class="close-btn" id="closeTaskModal">&#10005;</button>
             </div>
             <div class="form-group">
                 <label>task id</label>
@@ -590,25 +241,25 @@ Created On     : 2026-01-29
             </div>
             <div class="form-group">
                 <label>description</label>
-                <textarea id="taskDescription" placeholder="What needs to be done..."></textarea>
+                <textarea id="taskDescription" placeholder="what needs to be done..."></textarea>
             </div>
             <div class="form-group">
                 <label>notes</label>
-                <input type="text" id="taskNotes" placeholder="Optional details">
+                <input type="text" id="taskNotes" placeholder="optional details">
             </div>
             <div class="form-group">
                 <label>priority</label>
                 <select id="taskPriority">
-                    <option value="low">Low</option>
-                    <option value="med" selected>Medium</option>
-                    <option value="high">High</option>
+                    <option value="low">low</option>
+                    <option value="med" selected>medium</option>
+                    <option value="high">high</option>
                 </select>
             </div>
             <div class="form-group">
                 <label>deadline</label>
                 <input type="datetime-local" id="taskDeadline">
             </div>
-            <button id="saveTaskBtn" style="width: 100%;">add task</button>
+            <button id="saveTaskBtn" style="width:100%;">add task</button>
         </div>
     </div>
 
@@ -617,13 +268,13 @@ Created On     : 2026-01-29
         <div class="modal-content">
             <div class="modal-header">
                 <h2>add note</h2>
-                <button class="close-btn" id="closeNoteModal">✕</button>
+                <button class="close-btn" id="closeNoteModal">&#10005;</button>
             </div>
             <div class="form-group">
                 <label>note</label>
-                <textarea id="noteContent" placeholder="Type your note..." style="min-height: 150px;"></textarea>
+                <textarea id="noteContent" placeholder="type your note..." style="min-height:150px;"></textarea>
             </div>
-            <button id="saveNoteBtn" style="width: 100%;">add note</button>
+            <button id="saveNoteBtn" style="width:100%;">add note</button>
         </div>
     </div>
 
@@ -632,7 +283,7 @@ Created On     : 2026-01-29
         <div class="modal-content">
             <div class="modal-header">
                 <h2>edit task</h2>
-                <button class="close-btn" id="closeEditModal">✕</button>
+                <button class="close-btn" id="closeEditModal">&#10005;</button>
             </div>
             <div class="form-group">
                 <label>task id</label>
@@ -653,26 +304,51 @@ Created On     : 2026-01-29
             <div class="form-group">
                 <label>priority</label>
                 <select id="editPriority">
-                    <option value="low">Low</option>
-                    <option value="med">Medium</option>
-                    <option value="high">High</option>
+                    <option value="low">low</option>
+                    <option value="med">medium</option>
+                    <option value="high">high</option>
                 </select>
             </div>
             <div class="form-group">
                 <label>deadline</label>
                 <input type="datetime-local" id="editDeadline">
             </div>
-            <button id="saveEditBtn" style="width: 100%;">save changes</button>
+            <button id="saveEditBtn" style="width:100%;">save changes</button>
+        </div>
+    </div>
+
+    <!-- Export for Solitude Modal -->
+    <div class="modal" id="exportModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>&#8597; export for solitude os</h2>
+                <button class="close-btn" id="closeExportModal">&#10005;</button>
+            </div>
+            <p style="font-size:.65rem;opacity:.7;margin-bottom:1.5rem;">
+                copy each block below, then paste into solitude os via file &#8594; sync with task strips.
+            </p>
+            <div class="form-group">
+                <label>tasks (paste into "tasks" field in solitude)</label>
+                <textarea class="export-textarea" id="exportTasksText" rows="6" readonly></textarea>
+                <div class="copy-btn-row">
+                    <button onclick="copyExport('exportTasksText', this)">copy tasks</button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>notes (paste into "notes" field in solitude)</label>
+                <textarea class="export-textarea" id="exportNotesText" rows="4" readonly></textarea>
+                <div class="copy-btn-row">
+                    <button onclick="copyExport('exportNotesText', this)">copy notes</button>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        // Data storage
         let tasks = JSON.parse(localStorage.getItem('taskStrips')) || [];
         let notes = JSON.parse(localStorage.getItem('stickyNotes')) || [];
         let taskCounter = parseInt(localStorage.getItem('taskCounter')) || 1;
 
-        // Generate next task ID
         function getNextTaskId() {
             const id = `TASK-${String(taskCounter).padStart(3, '0')}`;
             taskCounter++;
@@ -680,99 +356,50 @@ Created On     : 2026-01-29
             return id;
         }
 
-        // Calculate elapsed time
         function getElapsedTime(timestamp) {
-            const now = Date.now();
-            const diff = now - timestamp;
-            const seconds = Math.floor(diff / 1000);
-            const minutes = Math.floor(seconds / 60);
-            const hours = Math.floor(minutes / 60);
-            const days = Math.floor(hours / 24);
-
-            if (days > 0) return `${days}d ${hours % 24}h`;
-            if (hours > 0) return `${hours}h ${minutes % 60}m`;
-            if (minutes > 0) return `${minutes}m ${seconds % 60}s`;
-            return `${seconds}s`;
+            const diff = Date.now() - timestamp;
+            const s = Math.floor(diff/1000), m = Math.floor(s/60), h = Math.floor(m/60), d = Math.floor(h/24);
+            if (d > 0) return `${d}d ${h%24}h`;
+            if (h > 0) return `${h}h ${m%60}m`;
+            if (m > 0) return `${m}m ${s%60}s`;
+            return `${s}s`;
         }
 
-        // Time display functions
         function updateClocks() {
             const now = new Date();
-            
-            // Local time
-            const localTime = now.toLocaleTimeString('en-US', { 
-                hour: '2-digit', 
-                minute: '2-digit', 
-                second: '2-digit',
-                hour12: false 
-            });
-            const localDate = now.toLocaleDateString('en-US', { 
-                weekday: 'long',
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-            });
-            
-            // Calculate timezone offset
-            const offsetMinutes = -now.getTimezoneOffset();
-            const offsetHours = Math.floor(Math.abs(offsetMinutes) / 60);
-            const offsetMins = Math.abs(offsetMinutes) % 60;
-            const offsetSign = offsetMinutes >= 0 ? '+' : '-';
-            const gmtOffset = `GMT${offsetSign}${String(offsetHours).padStart(2, '0')}:${String(offsetMins).padStart(2, '0')}`;
-
-            // Zulu time (UTC)
-            const zuluTime = now.toISOString().substr(11, 8);
-            const zuluDate = now.toLocaleDateString('en-US', { 
-                weekday: 'long',
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric',
-                timeZone: 'UTC'
-            });
-            
+            const localTime = now.toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+            const localDate = now.toLocaleDateString('en-US', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+            const off = -now.getTimezoneOffset();
+            const offH = Math.floor(Math.abs(off)/60), offM = Math.abs(off)%60;
+            const gmt = `GMT${off>=0?'+':'-'}${String(offH).padStart(2,'0')}:${String(offM).padStart(2,'0')}`;
+            const zuluTime = now.toISOString().substr(11,8);
+            const zuluDate = now.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric',timeZone:'UTC'});
             document.getElementById('localTime').textContent = localTime;
             document.getElementById('localDate').textContent = localDate;
-            document.getElementById('localTimezone').textContent = `${gmtOffset}`;
+            document.getElementById('localTimezone').textContent = gmt;
             document.getElementById('zuluTime').textContent = zuluTime + 'Z';
             document.getElementById('zuluDate').textContent = zuluDate;
-
-            // Update elapsed times for all tasks
             document.querySelectorAll('.strip-elapsed').forEach(el => {
-                const timestamp = parseInt(el.dataset.timestamp);
-                el.textContent = getElapsedTime(timestamp);
+                el.textContent = getElapsedTime(parseInt(el.dataset.timestamp));
             });
         }
-
-        // Update clocks immediately and every second
         updateClocks();
         setInterval(updateClocks, 1000);
 
-        // Task strip functions
         function renderTasks() {
             const container = document.getElementById('stripsContainer');
-            
-            if (tasks.length === 0) {
+            if (!tasks.length) {
                 container.innerHTML = '<div class="empty-state">no tasks yet. click "+ add task" to begin.</div>';
                 return;
             }
-
             container.innerHTML = tasks.map((task, index) => {
-                const priorityClass = `priority-${task.priority}`;
-                const deadlineHtml = task.deadline ? `<div class="strip-deadline">${new Date(task.deadline).toLocaleString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                })}</div>` : '';
-                
+                const pClass = `priority-${task.priority}`;
+                const dlHtml = task.deadline ? `<div class="strip-deadline">${new Date(task.deadline).toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</div>` : '';
                 return `
                     <div class="task-strip" draggable="true" data-index="${index}"
-                         ondragstart="onDragStart(event, ${index})"
-                         ondragover="onDragOver(event)"
-                         ondragleave="onDragLeave(event)"
-                         ondrop="onDrop(event, ${index})"
-                         ondragend="onDragEnd(event)">
-                        <div class="drag-handle" title="drag to reorder">⠿</div>
+                         ondragstart="onDragStart(event,${index})" ondragover="onDragOver(event)"
+                         ondragleave="onDragLeave(event)" ondrop="onDrop(event,${index})" ondragend="onDragEnd(event)">
+                        <div class="drag-handle" title="drag to reorder">&#10783;</div>
                         <div class="strip-section">
                             <div class="strip-callsign">${task.callsign}</div>
                             <div class="strip-type">${task.type}</div>
@@ -782,92 +409,63 @@ Created On     : 2026-01-29
                             ${task.notes ? `<div class="strip-notes">${task.notes}</div>` : ''}
                         </div>
                         <div class="strip-section">
-                            <div class="strip-priority ${priorityClass}">${task.priority}</div>
+                            <div class="strip-priority ${pClass}">${task.priority}</div>
                             <div class="strip-elapsed" data-timestamp="${task.timestamp}"></div>
                         </div>
-                        <div class="strip-section">
-                            ${deadlineHtml}
-                        </div>
+                        <div class="strip-section">${dlHtml}</div>
                         <div class="strip-actions">
-                            <button class="strip-btn edit" onclick="openEditModal(${index})">✎</button>
-                            <button class="strip-btn complete" onclick="completeTask(${index})">✓</button>
-                            <button class="strip-btn delete" onclick="deleteTask(${index})">✕</button>
+                            <button class="strip-btn edit" onclick="openEditModal(${index})">&#9998;</button>
+                            <button class="strip-btn complete" onclick="completeTask(${index})">&#10003;</button>
+                            <button class="strip-btn delete" onclick="deleteTask(${index})">&#10005;</button>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             }).join('');
+            updateClocks();
+        }
 
-            updateClocks(); // Update elapsed times immediately
+        function saveTasks() {
+            localStorage.setItem('taskStrips', JSON.stringify(tasks));
         }
 
         function addTask(taskData) {
-            tasks.push({
-                ...taskData,
-                timestamp: Date.now()
-            });
-            localStorage.setItem('taskStrips', JSON.stringify(tasks));
-            chrome.storage.local.set({ taskStrips: JSON.parse(localStorage.getItem('taskStrips') || '[]') });
+            tasks.push({...taskData, timestamp: Date.now()});
+            saveTasks();
             renderTasks();
         }
 
         function completeTask(index) {
-            if (confirm('Mark this task as complete?')) {
+            if (confirm('mark this task as complete?')) {
                 tasks.splice(index, 1);
-                localStorage.setItem('taskStrips', JSON.stringify(tasks));
-                chrome.storage.local.set({ taskStrips: JSON.parse(localStorage.getItem('taskStrips') || '[]') });
+                saveTasks();
                 renderTasks();
             }
         }
 
         function deleteTask(index) {
-            if (confirm('Delete this task?')) {
+            if (confirm('delete this task?')) {
                 tasks.splice(index, 1);
-                localStorage.setItem('taskStrips', JSON.stringify(tasks));
-                chrome.storage.local.set({ taskStrips: JSON.parse(localStorage.getItem('taskStrips') || '[]') });
+                saveTasks();
                 renderTasks();
             }
         }
 
-        // ── Drag & Drop ──────────────────────────────────────────────────────
         let dragSrcIndex = null;
-
-        function onDragStart(e, index) {
-            dragSrcIndex = index;
-            e.currentTarget.classList.add('dragging');
-            e.dataTransfer.effectAllowed = 'move';
-        }
-
-        function onDragOver(e) {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-            e.currentTarget.classList.add('drag-over');
-        }
-
-        function onDragLeave(e) {
-            e.currentTarget.classList.remove('drag-over');
-        }
-
+        function onDragStart(e, index) { dragSrcIndex = index; e.currentTarget.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; }
+        function onDragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; e.currentTarget.classList.add('drag-over'); }
+        function onDragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
         function onDrop(e, dropIndex) {
-            e.preventDefault();
-            e.currentTarget.classList.remove('drag-over');
+            e.preventDefault(); e.currentTarget.classList.remove('drag-over');
             if (dragSrcIndex === null || dragSrcIndex === dropIndex) return;
             const moved = tasks.splice(dragSrcIndex, 1)[0];
             tasks.splice(dropIndex, 0, moved);
-            localStorage.setItem('taskStrips', JSON.stringify(tasks));
-            chrome.storage.local.set({ taskStrips: JSON.parse(localStorage.getItem('taskStrips') || '[]') });
-            renderTasks();
+            saveTasks(); renderTasks();
         }
-
         function onDragEnd(e) {
-            document.querySelectorAll('.task-strip').forEach(el => {
-                el.classList.remove('dragging', 'drag-over');
-            });
+            document.querySelectorAll('.task-strip').forEach(el => el.classList.remove('dragging','drag-over'));
             dragSrcIndex = null;
         }
 
-        // ── Edit Task ─────────────────────────────────────────────────────────
         let editingIndex = null;
-
         function openEditModal(index) {
             editingIndex = index;
             const task = tasks[index];
@@ -880,33 +478,21 @@ Created On     : 2026-01-29
             document.getElementById('editModal').classList.add('active');
         }
 
-        // Sticky note functions
         function renderNotes() {
             const container = document.getElementById('notesGrid');
-            
-            if (notes.length === 0) {
-                container.innerHTML = '<div class="empty-state">no notes yet.</div>';
-                return;
-            }
-
+            if (!notes.length) { container.innerHTML = '<div class="empty-state">no notes yet.</div>'; return; }
             container.innerHTML = notes.map((note, index) => `
                 <div class="sticky-note">
-                    <button class="note-delete" onclick="deleteNote(${index})">✕</button>
+                    <button class="note-delete" onclick="deleteNote(${index})">&#10005;</button>
                     <div class="note-content">${note.content}</div>
                     <div class="note-time">${note.created}</div>
-                </div>
-            `).join('');
+                </div>`).join('');
         }
 
         function addNote(content) {
             notes.push({
                 content,
-                created: new Date().toLocaleString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                })
+                created: new Date().toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})
             });
             localStorage.setItem('stickyNotes', JSON.stringify(notes));
             renderNotes();
@@ -918,49 +504,47 @@ Created On     : 2026-01-29
             renderNotes();
         }
 
-        // Modal handling
+        // ── Export for Solitude ──
+        function copyExport(id, btn) {
+            const el = document.getElementById(id);
+            el.select();
+            document.execCommand('copy');
+            const orig = btn.textContent;
+            btn.textContent = 'copied!';
+            setTimeout(function() { btn.textContent = orig; }, 1500);
+        }
+
+        document.getElementById('exportBtn').addEventListener('click', function() {
+            document.getElementById('exportTasksText').value = localStorage.getItem('taskStrips') || '[]';
+            document.getElementById('exportNotesText').value = localStorage.getItem('stickyNotes') || '[]';
+            document.getElementById('exportModal').classList.add('active');
+        });
+        document.getElementById('closeExportModal').addEventListener('click', function() {
+            document.getElementById('exportModal').classList.remove('active');
+        });
+
+        // ── Modals ──
         const taskModal = document.getElementById('taskModal');
         const noteModal = document.getElementById('noteModal');
+        const editModal = document.getElementById('editModal');
 
         document.getElementById('addTaskBtn').addEventListener('click', () => {
             taskModal.classList.add('active');
-            // Set placeholder with next task ID
             document.getElementById('taskCallsign').placeholder = `auto: ${getNextTaskId()}`;
         });
+        document.getElementById('addNoteBtn').addEventListener('click', () => noteModal.classList.add('active'));
+        document.getElementById('closeTaskModal').addEventListener('click', () => taskModal.classList.remove('active'));
+        document.getElementById('closeNoteModal').addEventListener('click', () => noteModal.classList.remove('active'));
+        document.getElementById('closeEditModal').addEventListener('click', () => editModal.classList.remove('active'));
 
-        document.getElementById('addNoteBtn').addEventListener('click', () => {
-            noteModal.classList.add('active');
-        });
-
-        document.getElementById('closeTaskModal').addEventListener('click', () => {
-            taskModal.classList.remove('active');
-        });
-
-        document.getElementById('closeNoteModal').addEventListener('click', () => {
-            noteModal.classList.remove('active');
-        });
-
-        // Close modals on outside click
-        [taskModal, noteModal].forEach(modal => {
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.classList.remove('active');
-                }
-            });
-        });
-
-        const editModal = document.getElementById('editModal');
-        document.getElementById('closeEditModal').addEventListener('click', () => {
-            editModal.classList.remove('active');
-        });
-        editModal.addEventListener('click', (e) => {
-            if (e.target === editModal) editModal.classList.remove('active');
+        [taskModal, noteModal, editModal].forEach(modal => {
+            modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('active'); });
         });
 
         document.getElementById('saveEditBtn').addEventListener('click', () => {
             if (editingIndex === null) return;
             const description = document.getElementById('editDescription').value.trim();
-            if (!description) { alert('Please enter a description!'); return; }
+            if (!description) { alert('please enter a description!'); return; }
             tasks[editingIndex] = {
                 ...tasks[editingIndex],
                 callsign: document.getElementById('editCallsign').value.trim() || tasks[editingIndex].callsign,
@@ -970,14 +554,9 @@ Created On     : 2026-01-29
                 priority: document.getElementById('editPriority').value,
                 deadline: document.getElementById('editDeadline').value,
             };
-            localStorage.setItem('taskStrips', JSON.stringify(tasks));
-            chrome.storage.local.set({ taskStrips: JSON.parse(localStorage.getItem('taskStrips') || '[]') });
-            renderTasks();
-            editModal.classList.remove('active');
-            editingIndex = null;
+            saveTasks(); renderTasks(); editModal.classList.remove('active'); editingIndex = null;
         });
 
-        // Save task
         document.getElementById('saveTaskBtn').addEventListener('click', () => {
             let callsign = document.getElementById('taskCallsign').value.trim();
             const type = document.getElementById('taskType').value.trim();
@@ -985,59 +564,29 @@ Created On     : 2026-01-29
             const notes = document.getElementById('taskNotes').value.trim();
             const priority = document.getElementById('taskPriority').value;
             const deadline = document.getElementById('taskDeadline').value;
-
-            if (!description) {
-                alert('Please enter a description!');
-                return;
-            }
-
-            // Auto-generate ID if not provided
-            if (!callsign) {
-                callsign = getNextTaskId();
-            }
-
-            addTask({
-                callsign,
-                type: type || 'general',
-                description,
-                notes,
-                priority,
-                deadline
-            });
-
-            // Clear form
+            if (!description) { alert('please enter a description!'); return; }
+            if (!callsign) callsign = getNextTaskId();
+            addTask({callsign, type: type || 'general', description, notes, priority, deadline});
             document.getElementById('taskCallsign').value = '';
             document.getElementById('taskType').value = '';
             document.getElementById('taskDescription').value = '';
             document.getElementById('taskNotes').value = '';
             document.getElementById('taskPriority').value = 'med';
             document.getElementById('taskDeadline').value = '';
-
             taskModal.classList.remove('active');
         });
 
-        // Save note
         document.getElementById('saveNoteBtn').addEventListener('click', () => {
             const content = document.getElementById('noteContent').value.trim();
-
-            if (!content) {
-                alert('Please enter some text!');
-                return;
-            }
-
+            if (!content) { alert('please enter some text!'); return; }
             addNote(content);
             document.getElementById('noteContent').value = '';
             noteModal.classList.remove('active');
         });
 
+        // ── Dark mode ──
         const darkModeBtn = document.getElementById('darkModeBtn');
-        const savedTheme = localStorage.getItem('theme');
-        
-        if (savedTheme === 'dark') {
-            document.body.classList.add('dark');
-            darkModeBtn.textContent = 'light mode';
-        }
-
+        if (localStorage.getItem('theme') === 'dark') { document.body.classList.add('dark'); darkModeBtn.textContent = 'light mode'; }
         darkModeBtn.addEventListener('click', () => {
             document.body.classList.toggle('dark');
             const isDark = document.body.classList.contains('dark');
