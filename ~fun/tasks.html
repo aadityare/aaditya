@@ -1046,6 +1046,7 @@ Created On     : 2026-01-29
         renderNotes();
 
         window.addEventListener('message', function(e) {
+          console.log("REQ_FOR_TASKSTRIPS");
           if (!e.data || e.data.type !== 'SOL_GET_TASKSTRIPS') return;
           e.source.postMessage({
             type: 'SOL_TASKSTRIPS_DATA',
