@@ -916,10 +916,10 @@ function doSync() {
   // wait for bridge iframe to be ready, then request
   var bridge = document.getElementById('ts-bridge');
   if (bridge.contentWindow) {
-    bridge.contentWindow.postMessage({ type: 'SOL_GET_TASKSTRIPS' }, 'https://www.aadi.zip');
+    bridge.contentWindow.postMessage({ type: 'SOL_GET_TASKSTRIPS' }, '*');
   } else {
     bridge.addEventListener('load', function() {
-      bridge.contentWindow.postMessage({ type: 'SOL_GET_TASKSTRIPS' }, 'https://www.aadi.zip');
+      bridge.contentWindow.postMessage({ type: 'SOL_GET_TASKSTRIPS' }, '*');
     });
   }
 }

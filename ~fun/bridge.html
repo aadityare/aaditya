@@ -6,7 +6,7 @@
 window.addEventListener('message', function(e) {
   if (!e.data || e.data.type !== 'SOL_GET_TASKSTRIPS') return;
   var data = localStorage.getItem('taskStrips');
-  e.source.postMessage({ type: 'SOL_TASKSTRIPS_DATA', data: data }, e.origin);
+  e.source.postMessage({ type: 'SOL_TASKSTRIPS_DATA', data: data }, '*');
 });
 </script>
 </body>
