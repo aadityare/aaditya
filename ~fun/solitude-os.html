@@ -99,6 +99,9 @@ html.dark .menu-bar { background:rgba(0,0,0,0.82); }
 #todo-list-window .window-body { max-height:340px; }
 #notes-window      { bottom:10px; left:10px; top:auto; width:260px; }
 #notes-window .window-body { max-height:220px; }
+#bg-modal { top:60px; left:calc(50% - 175px); width:350px; z-index:9999; }
+#bg-modal .window-body { max-height:340px; }
+.noise-slider { width:100%; cursor:pointer; accent-color:var(--fg); margin-top:4px; }
 #info-window       { top:40px; left:calc(50% - 160px); width:320px; z-index:9998; }
 #info-window .window-body { max-height:420px; }
 #sync-window       { top:10px; left:320px; width:320px; z-index:500; }
@@ -219,7 +222,7 @@ html.dark .side-dropdown-content { background:rgba(20,20,20,0.95); }
       <div class="dropdown-item" id="mi-sync">sync with task strips</div>
     </div>
   </div>
-  <div class="menu-item disabled"><span class="menu-label">edit</span></div>
+  <div class="menu-item disabled" style="opacity: 50%;"><span class="menu-label">edit</span></div>
   <div class="menu-item">
     <span class="menu-label">view</span>
     <div class="dropdown-content">
@@ -258,10 +261,11 @@ html.dark .side-dropdown-content { background:rgba(20,20,20,0.95); }
       <img src="https://i.imgur.com/y2vnEm2.png" style="width:30px;height:30px;" alt="search">
       <div class="search-options">
         <div class="search-option" onclick="doSearch('Google')"><img src="https://i.imgur.com/lG24L8z.png"> google</div>
-        <div class="search-option" onclick="doSearch('Bing')"><img src="https://i.imgur.com/6DKuHMN.png"> bing</div>
-        <div class="search-option" onclick="doSearch('Brave')"><img src="https://static-00.iconduck.com/assets.00/brave-icon-2048x2048-2wvuonpc.png"> brave</div>
+        <div class="search-option" onclick="doSearch('Bing')"><img src="https://i.imgur.com/XWReSiR.png"> bing</div>
+        <div class="search-option" onclick="doSearch('Brave')"><img src="https://i.imgur.com/uYC5l5T.png"> brave</div>
         <div class="search-option" onclick="doSearch('ChatGPT')"><img src="https://i.imgur.com/DIst8Dx.png"> chatgpt</div>
-        <div class="search-option" onclick="doSearch('DuckDuckGo')"><img src="https://i.imgur.com/6gxgb6C.png"> duckduckgo</div>
+        <div class="search-option" onclick="doSearch('Claude')"><img src="https://i.imgur.com/PrB4ers.png"> claude</div>
+        <div class="search-option" onclick="doSearch('DuckDuckGo')"><img src="https://i.imgur.com/9W2eSW1.png"> duckduckgo</div>
       </div>
     </div>
   </div>
@@ -403,6 +407,35 @@ html.dark .side-dropdown-content { background:rgba(20,20,20,0.95); }
       <div class="row-flex" style="margin-top:6px;">
         <input type="text" id="new-wc-name" class="win-input" placeholder="wildcard name">
         <button class="win-btn" onclick="addWildcard()">+ add</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="window" id="bg-modal">
+    <div class="window-header">
+      <div class="window-titlebar">
+        <div class="window-close" onclick="closeWin('bg-modal')">&#215;</div>
+        <span class="window-title">background settings</span>
+      </div>
+    </div>
+    <div class="window-body">
+      <p style="font-size:10px;font-weight:700;margin-bottom:4px;">youtube url</p>
+      <input type="text" id="bg-url-input" class="win-input" style="width:100%;margin-bottom:8px;" placeholder="https://www.youtube.com/watch?v=...">
+      <p style="font-size:10px;font-weight:700;margin-bottom:4px;">start at (seconds)</p>
+      <input type="number" id="bg-start-input" class="win-input" style="width:100%;margin-bottom:12px;" placeholder="0" min="0">
+      <div class="menu-div" style="margin:8px 0;"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+        <p style="font-size:10px;font-weight:700;">noise opacity</p>
+        <span id="noise-val" style="font-size:10px;color:var(--muted);">0.15</span>
+      </div>
+      <input type="range" id="noise-slider" class="noise-slider" min="0" max="0.5" step="0.01" value="0.15">
+      <div style="display:flex;justify-content:space-between;margin-top:2px;">
+        <span style="font-size:9px;color:var(--muted);">off</span>
+        <span style="font-size:9px;color:var(--muted);">max</span>
+      </div>
+      <div class="row-flex" style="margin-top:14px;">
+        <button class="win-btn" style="flex:1;" onclick="applyBgSettings()">apply &amp; reload</button>
+        <button class="win-btn" onclick="closeWin('bg-modal')">cancel</button>
       </div>
     </div>
   </div>
@@ -700,7 +733,7 @@ function createShortcut(url, name, doSave) {
 // ── Search ──
 function doSearch(engine) {
   var q = encodeURIComponent(document.getElementById('search-input').value);
-  var map = {Google:'https://www.google.com/search?q=',Bing:'https://www.bing.com/search?q=',Brave:'https://search.brave.com/search?q=',ChatGPT:'https://chat.openai.com/?q=',DuckDuckGo:'https://duckduckgo.com/?q='};
+  var map = {Google:'https://www.google.com/search?q=',Bing:'https://www.bing.com/search?q=',Brave:'https://search.brave.com/search?q=',ChatGPT:'https://chat.openai.com/?q=',Claude:'https://claude.ai/new?q=',DuckDuckGo:'https://duckduckgo.com/?q='};
   if (map[engine]) window.open(map[engine] + q, '_blank');
 }
 function toggleSearchBar() {
@@ -784,8 +817,11 @@ function clearSynced() {
 }
 
 // ── Noise ──
+// ── Noise ──
+var _noiseOpacity = parseFloat(localStorage.getItem('noiseOpacity') || '0.15');
 (function() {
   var canvas = document.getElementById('noiseCanvas');
+  canvas.style.opacity = _noiseOpacity;
   var ctx = canvas.getContext('2d');
   function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
   function draw() {
@@ -796,28 +832,50 @@ function clearSynced() {
   window.addEventListener('resize', resize); resize(); setInterval(draw, 100);
 })();
 
+function setNoiseOpacity(val) {
+  _noiseOpacity = val;
+  document.getElementById('noiseCanvas').style.opacity = val;
+  localStorage.setItem('noiseOpacity', val);
+}
+
+function applyBgSettings() {
+  var url   = document.getElementById('bg-url-input').value.trim();
+  var start = parseInt(document.getElementById('bg-start-input').value) || 0;
+  var opacity = parseFloat(document.getElementById('noise-slider').value);
+  if (url) localStorage.setItem('bgVideoURL', url);
+  localStorage.setItem('bgVideoStart', start);
+  localStorage.setItem('noiseOpacity', opacity);
+  location.reload();
+}
+
 document.addEventListener('DOMContentLoaded', function() {
 
-  // ── YouTube ──
-  (function() {
-    var def = 'https://www.youtube.com/watch?v=mN2VLo-74BE';
-    var saved = localStorage.getItem('bgVideoURL') || def;
-    if (!localStorage.getItem('bgVideoURL')) localStorage.setItem('bgVideoURL', def);
-    var ytbg = document.getElementById('ytbg');
-    var videoID = saved.split('v=')[1];
-    if (videoID) {
-      var amp = videoID.indexOf('&');
-      if (amp !== -1) videoID = videoID.substring(0, amp);
-      var iframe = document.createElement('iframe');
-      iframe.src = 'https://www.youtube.com/embed/' + videoID + '?autoplay=1&mute=1&loop=1&playlist=' + videoID;
-      iframe.style.position = 'absolute'; iframe.style.top = '0'; iframe.style.left = '0';
-      iframe.style.width = '100%'; iframe.style.height = '100%';
-      iframe.style.zIndex = '-2'; iframe.style.border = 'none'; iframe.allow = 'autoplay';
-      ytbg.appendChild(iframe);
-    }
-  })();
+// ── YouTube ──
+(function() {
+  var def = 'https://www.youtube.com/watch?v=mN2VLo-74BE';
+  var saved = localStorage.getItem('bgVideoURL') || def;
+  if (!localStorage.getItem('bgVideoURL')) localStorage.setItem('bgVideoURL', def);
+  var startAt = parseInt(localStorage.getItem('bgVideoStart') || '0') || 0;
+  var m = saved.match(/[?&]v=([^&]+)/);
+  if (m) {
+    var videoID = m[1];
+    var iframe = document.createElement('iframe');
+    iframe.src = 'https://www.youtube.com/embed/' + videoID +
+      '?autoplay=1&mute=1&loop=1&playlist=' + videoID +
+      (startAt > 0 ? '&start=' + startAt : '');
+    iframe.style.position = 'absolute'; iframe.style.top = '0'; iframe.style.left = '0';
+    iframe.style.width = '100%'; iframe.style.height = '100%';
+    iframe.style.zIndex = '-2'; iframe.style.border = 'none'; iframe.allow = 'autoplay';
+    document.getElementById('ytbg').appendChild(iframe);
+  }
+})();
 
   document.querySelectorAll('.window').forEach(makeDraggable);
+  document.getElementById('noise-slider').addEventListener('input', function() {
+    var val = parseFloat(this.value);
+    document.getElementById('noise-val').textContent = val.toFixed(2);
+    setNoiseOpacity(val);
+  });
 
   document.getElementById('mi-getinfo').addEventListener('click', function(e) { e.stopPropagation(); openWin('info-window'); });
   document.getElementById('mi-darkmode').addEventListener('click', function(e) { e.stopPropagation(); toggleDarkMode(); });
@@ -842,8 +900,12 @@ document.addEventListener('DOMContentLoaded', function() {
   });
   document.getElementById('mi-changebg').addEventListener('click', function(e) {
     e.stopPropagation();
-    var url = prompt('enter youtube url:');
-    if (url) { localStorage.setItem('bgVideoURL', url); location.reload(); }
+    document.getElementById('bg-url-input').value = localStorage.getItem('bgVideoURL') || '';
+    document.getElementById('bg-start-input').value = localStorage.getItem('bgVideoStart') || '0';
+    var op = parseFloat(localStorage.getItem('noiseOpacity') || '0.15');
+    document.getElementById('noise-slider').value = op;
+    document.getElementById('noise-val').textContent = op.toFixed(2);
+    openWin('bg-modal');
   });
   document.getElementById('mi-welcome').addEventListener('click', function(e) { e.stopPropagation(); openWelcomeModal(); });
 
