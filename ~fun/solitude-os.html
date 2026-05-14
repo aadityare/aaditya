@@ -324,7 +324,7 @@ html.dark .side-dropdown-content { background:rgba(20,20,20,0.95); }
 
 <div class="desktop">
 
-  <iframe id="ts-bridge" src="https://aadi.zip/~fun/bridge.html" style="display:none;" sandbox="allow-scripts allow-same-origin"></iframe>
+  <iframe id="ts-bridge" src="https://www.aadi.zip/~fun/bridge.html" style="display:none;" sandbox="allow-scripts allow-same-origin"></iframe>
 
   <div id="search-bar">
     <input type="text" id="search-input" placeholder="search..." autocomplete="off"
@@ -916,10 +916,10 @@ function doSync() {
   // wait for bridge iframe to be ready, then request
   var bridge = document.getElementById('ts-bridge');
   if (bridge.contentWindow) {
-    bridge.contentWindow.postMessage({ type: 'SOL_GET_TASKSTRIPS' }, 'https://aadi.zip');
+    bridge.contentWindow.postMessage({ type: 'SOL_GET_TASKSTRIPS' }, 'https://www.aadi.zip');
   } else {
     bridge.addEventListener('load', function() {
-      bridge.contentWindow.postMessage({ type: 'SOL_GET_TASKSTRIPS' }, 'https://aadi.zip');
+      bridge.contentWindow.postMessage({ type: 'SOL_GET_TASKSTRIPS' }, 'https://www.aadi.zip');
     });
   }
 }
