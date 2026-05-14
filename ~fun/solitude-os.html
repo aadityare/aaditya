@@ -850,16 +850,13 @@ function doSync() {
   listEl.innerHTML = '';
   statusEl.textContent = 'requesting data...';
 
-  var bridge = document.getElementById('ts-bridge');
+  if (typeof chrome === 'undefined' || !chrome.storage) {
+    statusEl.textContent = '⚠ chrome.storage not available.';
+    return;
+  }
 
-  function onBridgeMsg(e) {
-    if (!e.data || e.data.type !== 'SOL_TASKSTRIPS_DATA') return;
-    window.removeEventListener('message', onBridgeMsg);
-
-    var tasks = [];
-    try { tasks = JSON.parse(e.data.data || '[]'); } catch(err) {
-      statusEl.textContent = '✕ could not parse task strips data.'; return;
-    }
+  chrome.storage.local.get('taskStrips', function(result) {
+    var tasks = result.taskStrips || [];
     if (!tasks.length) { statusEl.textContent = '⚠ no task strips data found.'; return; }
 
     var existing = new Set();
@@ -868,11 +865,10 @@ function doSync() {
     });
 
     var synced = new Set();
-    try { synced = new Set(JSON.parse(localStorage.getItem('sol-synced') || '[]')); } catch(err) {}
+    try { synced = new Set(JSON.parse(localStorage.getItem('sol-synced') || '[]')); } catch(e) {}
 
     var added = 0;
     var pcolor = {high:'#cc2200', med:'#cc8800', low:'#228833'};
-    listEl.innerHTML = '';
 
     tasks.forEach(function(task) {
       var desc = String(task.description || task.callsign || '');
@@ -893,7 +889,7 @@ function doSync() {
       if (isNew) {
         var deadline = '';
         if (task.deadline) {
-          try { deadline = new Date(task.deadline).toLocaleDateString('en-US',{year:'numeric',month:'2-digit',day:'2-digit'}); } catch(err) {}
+          try { deadline = new Date(task.deadline).toLocaleDateString('en-US',{year:'numeric',month:'2-digit',day:'2-digit'}); } catch(e) {}
         }
         var pri = {high:'high', med:'med', low:'low'}[task.priority] || 'none';
         addTodoRow(desc, deadline, false, pri);
@@ -909,18 +905,7 @@ function doSync() {
     statusEl.textContent = added > 0
       ? '✓ imported ' + added + ' task(s).'
       : '✓ all ' + tasks.length + ' task(s) already present.';
-  }
-
-  window.addEventListener('message', onBridgeMsg);
-
-  var bridge = document.getElementById('ts-bridge');
-  if (bridge.contentWindow) {
-    bridge.contentWindow.postMessage({ type: 'SOL_GET_TASKSTRIPS' }, '*');
-  } else {
-    bridge.addEventListener('load', function() {
-      bridge.contentWindow.postMessage({ type: 'SOL_GET_TASKSTRIPS' }, '*');
-    });
-  }
+  });
 }
 
 function clearSynced() {

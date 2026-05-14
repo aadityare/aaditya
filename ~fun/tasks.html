@@ -806,6 +806,7 @@ Created On     : 2026-01-29
                 timestamp: Date.now()
             });
             localStorage.setItem('taskStrips', JSON.stringify(tasks));
+            chrome.storage.local.set({ taskStrips: JSON.parse(localStorage.getItem('taskStrips') || '[]') });
             renderTasks();
         }
 
@@ -813,6 +814,7 @@ Created On     : 2026-01-29
             if (confirm('Mark this task as complete?')) {
                 tasks.splice(index, 1);
                 localStorage.setItem('taskStrips', JSON.stringify(tasks));
+                chrome.storage.local.set({ taskStrips: JSON.parse(localStorage.getItem('taskStrips') || '[]') });
                 renderTasks();
             }
         }
@@ -821,6 +823,7 @@ Created On     : 2026-01-29
             if (confirm('Delete this task?')) {
                 tasks.splice(index, 1);
                 localStorage.setItem('taskStrips', JSON.stringify(tasks));
+                chrome.storage.local.set({ taskStrips: JSON.parse(localStorage.getItem('taskStrips') || '[]') });
                 renderTasks();
             }
         }
@@ -851,6 +854,7 @@ Created On     : 2026-01-29
             const moved = tasks.splice(dragSrcIndex, 1)[0];
             tasks.splice(dropIndex, 0, moved);
             localStorage.setItem('taskStrips', JSON.stringify(tasks));
+            chrome.storage.local.set({ taskStrips: JSON.parse(localStorage.getItem('taskStrips') || '[]') });
             renderTasks();
         }
 
@@ -967,6 +971,7 @@ Created On     : 2026-01-29
                 deadline: document.getElementById('editDeadline').value,
             };
             localStorage.setItem('taskStrips', JSON.stringify(tasks));
+            chrome.storage.local.set({ taskStrips: JSON.parse(localStorage.getItem('taskStrips') || '[]') });
             renderTasks();
             editModal.classList.remove('active');
             editingIndex = null;
@@ -1042,15 +1047,6 @@ Created On     : 2026-01-29
 
         renderTasks();
         renderNotes();
-
-        window.addEventListener('message', function(e) {
-          console.log("REQ_FOR_TASKSTRIPS");
-          localStorage.setItem('taskStrips', localStorage.getItem('taskStrips'))
-          e.source.postMessage({
-            type: 'SOL_TASKSTRIPS_DATA',
-            data: localStorage.getItem('taskStrips')
-          }, '*');
-        });
     </script>
 </body>
 </html>
