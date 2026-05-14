@@ -324,6 +324,8 @@ html.dark .side-dropdown-content { background:rgba(20,20,20,0.95); }
 
 <div class="desktop">
 
+  <iframe id="ts-bridge" src="https://aadi.zip/~fun/bridge.html" style="display:none;" sandbox="allow-scripts allow-same-origin"></iframe>
+
   <div id="search-bar">
     <input type="text" id="search-input" placeholder="search..." autocomplete="off"
            onkeypress="if(event.keyCode===13){doSearch('Google');}">
@@ -846,59 +848,80 @@ function doSync() {
   var statusEl = document.getElementById('sync-status');
   var listEl   = document.getElementById('sync-results');
   listEl.innerHTML = '';
+  statusEl.textContent = 'requesting data...';
 
-  var tasks = [];
-  try { tasks = JSON.parse(localStorage.getItem('taskStrips') || '[]'); } catch(e) {
-    statusEl.textContent = '✕ could not parse task strips data.'; return;
-  }
-  if (!tasks.length) { statusEl.textContent = '⚠ no task strips data in this browser.'; return; }
+  var bridge = document.getElementById('ts-bridge');
 
-  var existing = new Set();
-  document.querySelectorAll('#todoList tr td.task').forEach(function(td) {
-    existing.add(td.innerText.trim().toLowerCase());
-  });
+  function onBridgeMsg(e) {
+    if (!e.data || e.data.type !== 'SOL_TASKSTRIPS_DATA') return;
+    window.removeEventListener('message', onBridgeMsg);
 
-  var synced = new Set();
-  try { synced = new Set(JSON.parse(localStorage.getItem('sol-synced') || '[]')); } catch(e) {}
-
-  var added = 0;
-  var pcolor = {high:'#cc2200', med:'#cc8800', low:'#228833'};
-
-  tasks.forEach(function(task) {
-    var desc = String(task.description || task.callsign || '');
-    var isNew = !synced.has(task.callsign) && !existing.has(desc.toLowerCase());
-
-    var li = document.createElement('li');
-    var col = pcolor[task.priority] || '#888';
-    li.innerHTML =
-      '<span style="display:flex;align-items:center;flex:1;overflow:hidden;gap:5px;">' +
-        '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:' + col + ';flex-shrink:0;"></span>' +
-        '<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + esc(desc) + '">' +
-          '<strong>' + esc(task.callsign || '') + '</strong> ' + esc(desc) +
-        '</span>' +
-      '</span>' +
-      '<span class="sync-tag' + (isNew ? ' new' : '') + '">' + (isNew ? 'new' : 'exists') + '</span>';
-    listEl.appendChild(li);
-
-    if (isNew) {
-      var deadline = '';
-      if (task.deadline) {
-        try { deadline = new Date(task.deadline).toLocaleDateString('en-US',{year:'numeric',month:'2-digit',day:'2-digit'}); } catch(e) {}
-      }
-      var pri = {high:'high', med:'med', low:'low'}[task.priority] || 'none';
-      addTodoRow(desc, deadline, false, pri);
-      synced.add(task.callsign);
-      existing.add(desc.toLowerCase());
-      added++;
+    var tasks = [];
+    try { tasks = JSON.parse(e.data.data || '[]'); } catch(err) {
+      statusEl.textContent = '✕ could not parse task strips data.'; return;
     }
-  });
+    if (!tasks.length) { statusEl.textContent = '⚠ no task strips data found.'; return; }
 
-  localStorage.setItem('sol-synced', JSON.stringify(Array.from(synced)));
-  saveData();
-  openWin('todo-list-window');
-  statusEl.textContent = added > 0
-    ? '✓ imported ' + added + ' task(s).'
-    : '✓ all ' + tasks.length + ' task(s) already present.';
+    var existing = new Set();
+    document.querySelectorAll('#todoList tr td.task').forEach(function(td) {
+      existing.add(td.innerText.trim().toLowerCase());
+    });
+
+    var synced = new Set();
+    try { synced = new Set(JSON.parse(localStorage.getItem('sol-synced') || '[]')); } catch(err) {}
+
+    var added = 0;
+    var pcolor = {high:'#cc2200', med:'#cc8800', low:'#228833'};
+    listEl.innerHTML = '';
+
+    tasks.forEach(function(task) {
+      var desc = String(task.description || task.callsign || '');
+      var isNew = !synced.has(task.callsign) && !existing.has(desc.toLowerCase());
+
+      var li = document.createElement('li');
+      var col = pcolor[task.priority] || '#888';
+      li.innerHTML =
+        '<span style="display:flex;align-items:center;flex:1;overflow:hidden;gap:5px;">' +
+          '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:' + col + ';flex-shrink:0;"></span>' +
+          '<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + esc(desc) + '">' +
+            '<strong>' + esc(task.callsign || '') + '</strong> ' + esc(desc) +
+          '</span>' +
+        '</span>' +
+        '<span class="sync-tag' + (isNew ? ' new' : '') + '">' + (isNew ? 'new' : 'exists') + '</span>';
+      listEl.appendChild(li);
+
+      if (isNew) {
+        var deadline = '';
+        if (task.deadline) {
+          try { deadline = new Date(task.deadline).toLocaleDateString('en-US',{year:'numeric',month:'2-digit',day:'2-digit'}); } catch(err) {}
+        }
+        var pri = {high:'high', med:'med', low:'low'}[task.priority] || 'none';
+        addTodoRow(desc, deadline, false, pri);
+        synced.add(task.callsign);
+        existing.add(desc.toLowerCase());
+        added++;
+      }
+    });
+
+    localStorage.setItem('sol-synced', JSON.stringify(Array.from(synced)));
+    saveData();
+    openWin('todo-list-window');
+    statusEl.textContent = added > 0
+      ? '✓ imported ' + added + ' task(s).'
+      : '✓ all ' + tasks.length + ' task(s) already present.';
+  }
+
+  window.addEventListener('message', onBridgeMsg);
+
+  // wait for bridge iframe to be ready, then request
+  var bridge = document.getElementById('ts-bridge');
+  if (bridge.contentWindow) {
+    bridge.contentWindow.postMessage({ type: 'SOL_GET_TASKSTRIPS' }, 'https://aadi.zip');
+  } else {
+    bridge.addEventListener('load', function() {
+      bridge.contentWindow.postMessage({ type: 'SOL_GET_TASKSTRIPS' }, 'https://aadi.zip');
+    });
+  }
 }
 
 function clearSynced() {
