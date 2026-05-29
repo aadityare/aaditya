@@ -1,1 +1,5 @@
-.vercel
+.vercel/
+ssh-server/host_key
+ssh-server/host_key.pub
+ssh-server/go.sum
+server/server

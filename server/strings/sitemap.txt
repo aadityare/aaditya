@@ -1,0 +1,11 @@
+
+\x1b[2m──────────────────────────────────────────────────────────\r
+\x1b[0m  curl aadi.zip              \x1b[97mhome\r
+\x1b[0m  curl aadi.zip/research     \x1b[97mresearch & publications\r
+\x1b[0m  curl aadi.zip/about        \x1b[97mabout me & links\r
+\x1b[0m  curl aadi.zip/help         \x1b[97mthis page\r
+\x1b[0m\r
+  ssh aadi.zip               \x1b[97minteractive TUI\r
+\x1b[0m  telnet aadi.zip            \x1b[97mtext TUI\r
+\x1b[0m\x1b[2m──────────────────────────────────────────────────────────\r
+\x1b[0m

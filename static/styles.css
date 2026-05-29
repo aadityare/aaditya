@@ -755,3 +755,50 @@ body.dark #aboutModal > div li {
 body.dark #aboutModal > div strong {
   filter: invert(0)!important;
 }
+
+.indexor {
+    max-width: 480px;
+    margin: 3rem auto;
+    padding: 0 1rem;
+    font-family: 'IBM Plex Mono', monospace;
+}
+
+.indexor h1 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 1.2rem;
+    border-left: 4px solid var(--accent);
+    padding-left: .75rem;
+    text-transform: lowercase;
+}
+
+.indexor a {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .45rem .75rem;
+    font-size: .85rem;
+    text-decoration: none;
+    color: var(--fg);
+    border-bottom: var(--border);
+    transition: .15s;
+}
+
+.indexor a:first-of-type {
+    border-top: var(--border);
+}
+
+.indexor a:hover {
+    color: var(--accent);
+    background: rgba(255, 85, 0, .06);
+    padding-left: 1.1rem;
+}
+
+.indexor a.dir::after {
+    content: "/";
+    opacity: .45;
+}
+
+.indexor .dim {
+    opacity: .4;
+}
