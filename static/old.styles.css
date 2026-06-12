@@ -1,0 +1,98 @@
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+nav {
+    background: #333;
+    color: #fff;
+    padding: 10px 0;
+    text-align: center;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin: 0 15px;
+}
+
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+}
+
+section {
+    padding: 20px;
+    border-bottom: 1px solid #ccc;
+}
+
+form {
+    margin-top: 10px;
+}
+
+form label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+form input[type="email"], form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+a[type="submit"] {
+    text-decoration: none;
+    padding: 10px 20px;
+    background: #333;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    vertical-align: middle;
+    line-height: normal;
+    display: inline-block;
+}
+
+a[type="submit"]:hover {
+    background: #555!important;
+}
+
+.mob-flexible {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.mob-resp-image {
+    max-width: 250px;max-height: 250px;
+    transition: 0.5s all ease-in-out;
+}
+
+.mob-resp-image:hover {
+     transform: scale(2);
+}
+
+.mob-only {
+    display: none;
+}
+
+@media only screen and (max-device-width: 480px) {
+    .mob-flexible {
+        display: block;
+    }
+    .mob-resp-image {
+        max-width: 150px;max-height: 150px;
+    }
+    .mob-only {
+        display: block;
+    }
+}
