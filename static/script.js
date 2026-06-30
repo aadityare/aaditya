@@ -26,7 +26,7 @@ const data = [
 const scr   = document.getElementById("scr");
 const glyph = document.getElementById("glyph");
 let timer;
-const typeSound = new Audio("https://www.soundjay.com/communication/computer-keyboard-1.wav");
+const typeSound = new Audio("sounds/key.mp3");
 
 scr.textContent = "";
 
