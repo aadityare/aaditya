@@ -959,7 +959,7 @@ body.dark #aboutModal > div strong {
     text-decoration: underline;
 }
 
-.notif-bar {
+.ssh-notif-bar {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -974,7 +974,7 @@ body.dark #aboutModal > div strong {
     border-bottom: var(--border)
 }
 
-.notif-bar code {
+.ssh-notif-bar code {
     background: black;
     color: #78ff9d;
     padding: .1rem .45rem;
@@ -994,7 +994,7 @@ body.dark #aboutModal > div strong {
   }
 }
 
-.notif-bar button {
+.ssh-notif-bar button {
     background: none;
     border: none;
     color: var(--fg);
@@ -1007,21 +1007,21 @@ body.dark #aboutModal > div strong {
     scale: 0.6;
 }
 
-.notif-bar button:hover {
+.ssh-notif-bar button:hover {
     opacity: 1;
     color: var(--accent)
 }
 
-.notif-bar.hidden {
+.ssh-notif-bar.hidden {
     display: none
 }
 
-.notif-bar code {
+.ssh-notif-bar code {
     cursor: pointer;
     transition: filter .2s
 }
 
-.notif-bar code:hover {
+.ssh-notif-bar code:hover {
     filter: brightness(1.15)
 }
 
@@ -1048,7 +1048,7 @@ body.dark #aboutModal > div strong {
 }
 
 @media(max-width:640px) {
-    .notif-bar {
+    .ssh-notif-bar {
         flex-wrap: wrap;
         font-size: .4rem
     }

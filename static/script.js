@@ -290,12 +290,12 @@ document.querySelectorAll('a[href^="mailto"]').forEach(link => {
 });
 
 (function(){
- var bar = document.getElementById('notifBar');
+ var bar = document.getElementById('SSHnotifBar');
  if(!bar) return;
  if(localStorage.getItem('sshNotifClosed') === '1'){
    bar.classList.add('hidden');
  } else {
-   document.getElementById('notifClose').addEventListener('click', function(){
+   document.getElementById('SSHnotifClose').addEventListener('click', function(){
      bar.classList.add('hidden');
      localStorage.setItem('sshNotifClosed', '1');
    });
