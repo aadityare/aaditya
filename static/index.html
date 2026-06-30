@@ -37,6 +37,13 @@
             <text x="1208" y="195">xdr</text>
          </g>
       </svg>
+
+      <div class="notif-bar" id="notifBar">
+         <span>techie? try <code id="sshTrigger">ssh aadi.zip</code></span>
+         <button id="notifClose" aria-label="dismiss notification">✕</button>
+      </div>
+      <span id="sshToast" class="ssh-toast">copied "ssh aadi.zip" · paste into your terminal</span>
+
       <!-- nav -->
       <nav>
          <h3>aaditya rengarajan</h3>
@@ -92,9 +99,9 @@
          <div class="hero">
             <div class="hero-text">
                <h1>cybersecurity & ml researcher</h1>
-               <h2>aspiring ph.d. student · cybersec & ai systems</h2>
+               <h2>aspiring ph.d. student · <a href="https://crypto.stackexchange.com/questions/62021/what-is-post-quantum-cryptography" target="_blank">applied pqcrypto</a> & <a href="https://ai.stackexchange.com/questions/12558/what-is-machine-learning" target="_blank">ml systems</a></h2>
                <div class="tags"><span class="tag">cybersecurity</span><span class="tag">machine learning</span><span class="tag">aviation security</span><span class="tag">llms</span></div>
-               <p class="quoteblock">contact: aaditya.r@ieee.org · aaditya.r@nyu.edu</p>
+               <p class="quoteblock">contact: aaditya<span class="emailSafe">[dot]</span>r<span class="emailSafe">[at]</span>ieee<span class="emailSafe">[dot]</span>org · aaditya<span class="emailSafe">[dot]</span>rengarajan<span class="emailSafe">[at]</span>nyu<span class="emailSafe">[dot]</span>edu</p>
                <button id="aboutBtn" style="font-family:'IBM Plex Mono',monospace;font-size:1rem;text-transform:lowercase;cursor:pointer;margin-top:-1rem;border:var(--border);padding:1rem;background:var(--bg);width: 100%;text-align: left;">about me</button>
                <div id="aboutModal"
                  style="position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);
@@ -188,14 +195,50 @@
       </section>
       <!-- recommendations -->
       <section id="recommendations">
+
+         <div class="lor-modal-overlay" id="lorOverlay">
+           <div class="lor-modal">
+             <h3>letter of recommendation</h3>
+             <p class="lor-sub">from <span id="lorIssuerName"></span>, available upon request from aaditya.</p>
+
+             <form id="lorForm">
+               <label for="lorName">your name</label>
+               <input type="text" id="lorName" required>
+
+               <label for="lorAffiliation">your affiliation</label>
+               <input type="text" id="lorAffiliation" required>
+
+               <label for="lorPurpose">purpose of request</label>
+               <textarea id="lorPurpose" placeholder="e.g. 'reviewing your application for our graduate program and would like to verify this letter.'" required></textarea>
+
+               <div class="lor-error" id="lorError">please fill in all fields.</div>
+
+               <div class="lor-modal-actions">
+                 <button type="button" id="lorCancel">cancel</button>
+                 <button type="submit" class="lor-primary" id="lorGenerate">generate request</button>
+               </div>
+             </form>
+
+             <a href="#" target="_blank" class="lor-mail-btn" id="lorMailBtn">request via mail</a>
+           </div>
+         </div>
+
+         <h2>references</h2>
+         <div class="ref-list">
+            <div class="ref-item"><img class="logo" src="https://yt3.ggpht.com/-RZYi5isxH_M/AAAAAAAAAAI/AAAAAAAAAAA/rmWpoe2qZzI/s900-c-k-no/photo.jpg"><a href="https://engineering.nyu.edu/faculty/giovanni-di-crescenzo" target="_blank">prof. giovanni di crescenzo</a>senior scientist, applied communication sciences & adjunct professor, nyu</div>
+            <div class="ref-item"><img class="logo" src="https://yt3.ggpht.com/-RZYi5isxH_M/AAAAAAAAAAI/AAAAAAAAAAA/rmWpoe2qZzI/s900-c-k-no/photo.jpg"><a href="https://sites.google.com/a/nyu.edu/delaram-kahrobaei/" target="_blank">prof. delaram kahrobaei</a>adjunct professor, nyu & professor, cuny & visiting professor, york university</div>
+         </div>
+
+         <br/><br/>
+            
          <h2>letters of recommendation</h2>
          <div class="lor-list">
-            <div class="lor-item"><img class="logo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSU8rXa5cfGd4nAGTj9whvNeOMIBAvDfw6tUQ&s">mr. pavan kumar – scientist and head of security, isro <a href="LOR_Pavan_Kumar.pdf" target="_blank">view</a></div>
-            <div class="lor-item"><img class="logo" src="https://i.ibb.co/39prdfQv/image.png">mr. harsh shah – founder, readmenow <a href="LOR_Harsh_Shah.pdf" target="_blank">view</a></div>
-            <div class="lor-item"><img class="logo" src="https://upload.wikimedia.org/wikipedia/en/e/eb/PSG_College_of_Technology_logo.png">dr. g. r. karpagam – professor, psg tech <a href="LOR_G_R_Karpagam.pdf" target="_blank">view</a></div>
-            <div class="lor-item"><img class="logo" src="https://upload.wikimedia.org/wikipedia/en/e/eb/PSG_College_of_Technology_logo.png">dr. g. sudha sadasivam – head of department, psg tech <a href="LOR_G_Sudha_Sadasivam.pdf" target="_blank">view</a></div>
-            <div class="lor-item"><img class="logo" src="https://upload.wikimedia.org/wikipedia/en/e/eb/PSG_College_of_Technology_logo.png">mr. a. c. ramesh – asst. professor, psg tech <a href="LOR_A_C_Ramesh.pdf" target="_blank">view</a></div>
-            <div class="lor-item"><img class="logo" src="https://www.equate.com/wp-content/uploads/2018/07/equate-logo-1.png">mr. ismaiel al tamimi – hr, equate <a href="LOR_Ismaiel_Al_Tamimi.pdf" target="_blank">view</a></div>
+            <div class="lor-item"><img class="logo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSU8rXa5cfGd4nAGTj9whvNeOMIBAvDfw6tUQ&s">mr. pavan kumar – scientist and head of security, isro <a style="cursor: pointer;">view</a></div>
+            <div class="lor-item"><img class="logo" src="https://i.ibb.co/39prdfQv/image.png">mr. harsh shah – founder, readmenow <a style="cursor: pointer;">view</a></div>
+            <div class="lor-item"><img class="logo" src="https://upload.wikimedia.org/wikipedia/en/e/eb/PSG_College_of_Technology_logo.png">dr. g. r. karpagam – professor, psg tech <a style="cursor: pointer;">view</a></div>
+            <div class="lor-item"><img class="logo" src="https://upload.wikimedia.org/wikipedia/en/e/eb/PSG_College_of_Technology_logo.png">dr. g. sudha sadasivam – head of department, psg tech <a style="cursor: pointer;">view</a></div>
+            <div class="lor-item"><img class="logo" src="https://upload.wikimedia.org/wikipedia/en/e/eb/PSG_College_of_Technology_logo.png">mr. a. c. ramesh – asst. professor, psg tech <a style="cursor: pointer;">view</a></div>
+            <div class="lor-item"><img class="logo" src="https://www.equate.com/wp-content/uploads/2018/07/equate-logo-1.png">mr. ismaiel al tamimi – hr, equate <a style="cursor: pointer;">view</a></div>
          </div>
       </section>
       <footer style="padding: 2rem 1rem; font-family: sans-serif; text-align: center;">
@@ -205,9 +248,9 @@
           <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; align-items: center; font-size: 0.9rem; margin-bottom: 1rem;">
             <a href="https://www.linkedin.com/in/aadityarengarajan/" target="_blank">linkedin</a>
             <span>·</span>
-            <a href="mailto:aaditya.r@ieee.org" target="_blank">aaditya.r@ieee.org</a>
+            <a href="mailto[colon]aaditya[dot]r[at]ieee[dot]org" target="_blank">aaditya<span class="emailSafe">[dot]</span>r<span class="emailSafe">[at]</span>ieee<span class="emailSafe">[dot]</span>org</a>
             <span>·</span>
-            <a href="mailto:aaditya.r@nyu.edu" target="_blank">aaditya.r@nyu.edu</a>
+            <a href="mailto[colon]aaditya[dot]rengarajan[at]nyu[dot]edu" target="_blank">aaditya<span class="emailSafe">[dot]</span>rengarajan<span class="emailSafe">[at]</span>nyu<span class="emailSafe">[dot]</span>edu</a>
             <span>·</span>
             <button class="bg-toggle" id="bgToggle" style="font-size: 0.9rem; padding: 0.4rem 0.7rem;">hide bg</button>
             <span>·</span>

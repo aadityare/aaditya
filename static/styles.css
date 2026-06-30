@@ -445,13 +445,13 @@ details ul {
     padding: 2px
 }
 
-.lor-list {
+.lor-list, .ref-list {
     display: flex;
     flex-direction: column;
     gap: 1.2rem
 }
 
-.lor-item {
+.lor-item, .ref-item {
     display: flex;
     align-items: center;
     gap: .8rem;
@@ -460,13 +460,13 @@ details ul {
     font-size: .95rem
 }
 
-.lor-item a {
+.lor-item a, .ref-item a {
     font-family: 'IBM Plex Mono', monospace;
     font-size: .8rem;
     border-bottom: 1px solid var(--fg)
 }
 
-.lor-item a:hover {
+.lor-item a:hover, .ref-item a:hover {
     color: var(--accent);
     border-color: var(--accent)
 }
@@ -801,4 +801,255 @@ body.dark #aboutModal > div strong {
 
 .indexor .dim {
     opacity: .4;
+}
+
+.lor-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem
+}
+
+.lor-modal-overlay.open {
+    display: flex
+}
+
+.lor-modal {
+    background: var(--bg);
+    color: var(--fg);
+    border: var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    width: 100%;
+    max-width: 420px;
+    font-family: 'Space Grotesk', sans-serif
+}
+
+.lor-modal h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: lowercase;
+    border-left: 4px solid var(--accent);
+    padding-left: .75rem;
+    margin-bottom: .5rem
+}
+
+.lor-modal .lor-sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: .75rem;
+    opacity: .6;
+    margin-bottom: 1.2rem
+}
+
+.lor-modal label {
+    display: block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: .75rem;
+    text-transform: lowercase;
+    margin: 1rem 0 .4rem
+}
+
+.lor-modal input,
+.lor-modal textarea {
+    width: 100%;
+    background: var(--bg);
+    color: var(--fg);
+    border: var(--border);
+    border-radius: 4px;
+    padding: .6rem .7rem;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: .9rem
+}
+
+.lor-modal input:focus,
+.lor-modal textarea:focus {
+    outline: 1px solid var(--accent)
+}
+
+.lor-modal textarea {
+    resize: vertical;
+    min-height: 100px;
+    font-size: 65%;
+}
+
+.lor-modal-actions {
+    margin-top: 1.4rem;
+    display: flex;
+    gap: .6rem;
+    justify-content: flex-end
+}
+
+.lor-modal-actions button {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: .8rem;
+    text-transform: lowercase;
+    padding: .5rem 1.1rem;
+    border: var(--border);
+    border-radius: 20px;
+    background: var(--bg);
+    color: var(--fg);
+    cursor: pointer;
+    transition: .3s
+}
+
+.lor-modal-actions button:hover {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent)
+}
+
+.lor-modal-actions .lor-primary {
+    background: var(--fg);
+    color: var(--bg);
+    border-color: var(--fg)
+}
+
+.lor-modal-actions .lor-primary:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff
+}
+
+.lor-mail-btn {
+    display: none;
+    margin-top: 1.4rem;
+    text-align: center;
+    text-decoration: none;
+    padding: .65rem;
+    border: var(--border);
+    border-radius: 20px;
+    background: var(--fg);
+    color: var(--bg) !important;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: .85rem;
+    text-transform: lowercase;
+    transition: .3s
+}
+
+.lor-mail-btn:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff !important
+}
+
+.lor-mail-btn.show {
+    display: block
+}
+
+.lor-error {
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--accent);
+    font-size: .72rem;
+    margin-top: .5rem;
+    display: none
+}
+
+.lor-error.show {
+    display: block
+}
+
+.emailSafe, .emailSafe.dark{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 65%;
+    vertical-align: middle;
+    text-decoration: underline;
+}
+
+.notif-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .75rem;
+    padding: .25rem 1rem;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: .5rem;
+    text-transform: lowercase;
+    text-align: center;
+    border-bottom: var(--border)
+}
+
+.notif-bar code {
+    background: black;
+    color: #78ff9d;
+    padding: .1rem .45rem;
+    border-radius: 3px;
+    font-family: inherit;
+    -webkit-animation: glow 1s ease-in-out infinite alternate;
+    -moz-animation: glow 1s ease-in-out infinite alternate;
+    animation: glow 1s ease-in-out infinite alternate;
+}
+
+@-webkit-keyframes glow {
+  from {
+    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #00e641, 0 0 40px #00e641, 0 0 50px #00e641, 0 0 60px #00e641, 0 0 70px #00e641;
+  }
+  to {
+    text-shadow: 0 0 20px #fff, 0 0 30px #4dff82, 0 0 40px #4dff82, 0 0 50px #4dff82, 0 0 60px #4dff82, 0 0 70px #4dff82, 0 0 80px #4dff82;
+  }
+}
+
+.notif-bar button {
+    background: none;
+    border: none;
+    color: var(--fg);
+    font-family: inherit;
+    font-size: .9rem;
+    line-height: 1;
+    cursor: pointer;
+    opacity: .7;
+    transition: opacity .2s, color .2s;
+    scale: 0.6;
+}
+
+.notif-bar button:hover {
+    opacity: 1;
+    color: var(--accent)
+}
+
+.notif-bar.hidden {
+    display: none
+}
+
+.notif-bar code {
+    cursor: pointer;
+    transition: filter .2s
+}
+
+.notif-bar code:hover {
+    filter: brightness(1.15)
+}
+
+.ssh-toast {
+    position: fixed;
+    top: 3.2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(-10px);
+    background: var(--accent);
+    color: #fff;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: .5rem;
+    padding: .4rem .8rem;
+    border-radius: 4px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s, transform .25s;
+    z-index: 50
+}
+
+.ssh-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0)
+}
+
+@media(max-width:640px) {
+    .notif-bar {
+        flex-wrap: wrap;
+        font-size: .4rem
+    }
 }

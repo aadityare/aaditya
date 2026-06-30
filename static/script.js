@@ -187,3 +187,159 @@ darkToggle.addEventListener('click', () => {
   document.body.classList.toggle('dark');
   darkToggle.textContent = document.body.classList.contains('dark') ? 'light mode' : 'dark mode';
 });
+
+// lor request modal
+(function () {
+   function decodeEmail(obfuscated) {
+      return obfuscated
+         .replace(/\[dot\]/g, '.')
+         .replace(/\[at\]/g, '@');
+   }
+   const EMAIL_SAFE = 'aaditya[dot]rengarajan[at]nyu[dot]edu';
+
+   const lorOverlay = document.getElementById('lorOverlay');
+   const lorIssuerName = document.getElementById('lorIssuerName');
+   const lorForm = document.getElementById('lorForm');
+   const lorName = document.getElementById('lorName');
+   const lorAffiliation = document.getElementById('lorAffiliation');
+   const lorPurpose = document.getElementById('lorPurpose');
+   const lorError = document.getElementById('lorError');
+   const lorMailBtn = document.getElementById('lorMailBtn');
+   const lorCancel = document.getElementById('lorCancel');
+
+   let currentIssuer = { name: '', org: '' };
+
+   function openLorModal(issuerName, issuerOrg) {
+      currentIssuer = { name: issuerName, org: issuerOrg };
+      lorIssuerName.textContent = issuerName + ' (' + issuerOrg + ')';
+      lorForm.reset();
+      lorForm.style.display = '';
+      lorMailBtn.classList.remove('show');
+      lorError.classList.remove('show');
+      lorOverlay.classList.add('open');
+   }
+
+   function closeLorModal() {
+      lorOverlay.classList.remove('open');
+   }
+
+   function buildLorMailto() {
+      const name = lorName.value.trim();
+      const affiliation = lorAffiliation.value.trim();
+      const purpose = lorPurpose.value.trim();
+
+      const to = decodeEmail(EMAIL_SAFE);
+      const subject = 'Request to view LoR';
+      const body =
+         'Hi Aaditya,\n\n' +
+         'I was browsing through your web portfolio and would like to request your LoR from ' +
+         currentIssuer.name + ' (' + currentIssuer.org + ').\n\n' +
+         purpose + '\n\n' +
+         'Thanks,\n' +
+         name + '\n' +
+         affiliation;
+
+      return 'mailto:' + to +
+         '?subject=' + encodeURIComponent(subject) +
+         '&body=' + encodeURIComponent(body);
+   }
+
+   lorForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!lorName.value.trim() || !lorAffiliation.value.trim() || !lorPurpose.value.trim()) {
+         lorError.classList.add('show');
+         return;
+      }
+      lorError.classList.remove('show');
+      lorMailBtn.href = buildLorMailto();
+      lorMailBtn.classList.add('show');
+      lorForm.style.display = 'none';
+   });
+
+   lorCancel.addEventListener('click', closeLorModal);
+   lorOverlay.addEventListener('click', (e) => {
+      if (e.target === lorOverlay) closeLorModal();
+   });
+
+   document.querySelectorAll('.lor-item').forEach((item) => {
+      const link = item.querySelector('a');
+      if (!link) return;
+
+      const rawText = item.textContent.split(link.textContent)[0].trim();
+      const parts = rawText.split('–');
+      const issuerName = (parts[0] || '').trim();
+      const issuerOrg = (parts[1] || '').trim();
+
+      link.addEventListener('click', (e) => {
+         e.preventDefault();
+         openLorModal(issuerName, issuerOrg);
+      });
+   });
+})();
+
+document.querySelectorAll('a[href^="mailto"]').forEach(link => {
+  const href = link.getAttribute('href');
+  const decoded = href.replace(/\[dot\]/g, '.').replace(/\[at\]/g, '@').replace(/\[colon\]/g, ':');
+  
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    window.open(decoded);
+  });
+  
+  link.setAttribute('href', '#');
+});
+
+(function(){
+ var bar = document.getElementById('notifBar');
+ if(!bar) return;
+ if(localStorage.getItem('sshNotifClosed') === '1'){
+   bar.classList.add('hidden');
+ } else {
+   document.getElementById('notifClose').addEventListener('click', function(){
+     bar.classList.add('hidden');
+     localStorage.setItem('sshNotifClosed', '1');
+   });
+ }
+
+ document.getElementById('sshTrigger').addEventListener('click', function(){
+   var ok = confirm('copy "ssh aadi.zip" to clipboard and try launching your terminal?');
+   if(!ok) return;
+
+   copyCommand();
+
+   var iframe = document.createElement('iframe');
+   iframe.style.display = 'none';
+   iframe.src = 'ssh://aadi.zip';
+   document.body.appendChild(iframe);
+   setTimeout(function(){ iframe.remove(); }, 1000);
+ });
+
+ function copyCommand(){
+   var text = 'ssh aadi.zip';
+   if(navigator.clipboard){
+     navigator.clipboard.writeText(text).then(showToast, function(){
+       fallbackCopy(text);
+     });
+   } else {
+     fallbackCopy(text);
+   }
+ }
+
+ function fallbackCopy(text){
+   var ta = document.createElement('textarea');
+   ta.value = text;
+   ta.style.position = 'fixed';
+   ta.style.opacity = '0';
+   document.body.appendChild(ta);
+   ta.select();
+   try { document.execCommand('copy'); } catch(e) {}
+   document.body.removeChild(ta);
+   showToast();
+ }
+
+ function showToast(){
+   var t = document.getElementById('sshToast');
+   t.classList.add('show');
+   setTimeout(function(){ t.classList.remove('show'); }, 3000);
+ }
+})();
